@@ -15,7 +15,7 @@ public class FingerTable {
     }
 
     public NodeInfo getNodeInfo(BigInteger id) {
-        return this.fingerTable.get(id);
+        return (NodeInfo) this.fingerTable.get(id);
     }
 
     public void removeNode(BigInteger id) {
@@ -29,5 +29,9 @@ public class FingerTable {
                 maxId = id;
         }
         return maxId;
+    }
+
+    public ConcurrentHashMap<BigInteger, NodeInfo> getFingerTable() {
+        return this.fingerTable;
     }
 }

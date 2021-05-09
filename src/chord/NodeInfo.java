@@ -3,9 +3,12 @@ package chord;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import java.math.BigInteger;
+
+
 public class NodeInfo {
-    InetAddress address;
-    int port;
+    private InetAddress address;
+    private int port;
 
     public NodeInfo(String IP, int port) {
         try {

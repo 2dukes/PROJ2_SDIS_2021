@@ -6,6 +6,7 @@ import utils.Utils;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.net.InetAddress;
 import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -22,10 +23,11 @@ public class Node {
 
     private ConcurrentHashMap<BigInteger, PeerFile> files;
 
-    public Node(String IP, int port) throws IOException {
+    public Node() throws IOException {
+        String IP = InetAddress.getLocalHost().getHostAddress();
         this.listener = new Listener();
         ThreadPool.getInstance().execute(this.listener);
-        this.nodeInfo = new NodeInfo(IP, port);
+        this.nodeInfo = new NodeInfo(IP, this.listener.getPort());
         this.fingerTable = new FingerTable();
 
         try {

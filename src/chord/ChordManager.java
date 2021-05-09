@@ -3,6 +3,9 @@ package chord;
 import utils.Utils;
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.List;
+import java.util.ArrayList;
 
 public class ChordManager {
 
@@ -18,7 +21,7 @@ public class ChordManager {
         // TODO: is buscar o IP e a porta do primeiro node, que está (num ficheiro)?? visível para todos
         // ir buscar a fingerTable desse node
 
-        FingerTable fingerTable = new FingerTable(); // fisrt node finger table
+        FingerTable fingerTable = new FingerTable(); // TODO: change to first node finger table
 
         boolean foundDeridedPlace = false;
         while (!foundDeridedPlace) {
@@ -28,6 +31,19 @@ public class ChordManager {
                 continue;
 
             // percorrer a fingerTable para encontrar o lugar no novo node
+
+            ConcurrentHashMap<BigInteger, NodeInfo> fingerTableMap = fingerTable.getFingerTable();
+            List<BigInteger> fingerTableKeys = new ArrayList<BigInteger>(fingerTableMap.keySet());
+            // Collections.sort(fingerTableKeys);
+
+            for (BigInteger nodeId: fingerTableMap.keySet()) {
+                if (nodeId.compareTo(id) > 0) {
+
+
+                }
+            }
+
+
 
 
         }

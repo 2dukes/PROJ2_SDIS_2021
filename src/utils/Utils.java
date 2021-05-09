@@ -25,9 +25,11 @@ public class Utils {
     public static Integer getAvailablePort() throws IOException {
         try {
             ServerSocket s = new ServerSocket(8000);
+            s.close();
             return 8000;
         } catch(IOException e) {
             ServerSocket s = new ServerSocket(0);
+            s.close();
             return s.getLocalPort();
         }
     }
