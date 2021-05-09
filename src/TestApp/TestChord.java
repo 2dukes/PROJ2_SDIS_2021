@@ -5,9 +5,10 @@ import chord.Node;
 import messages.Sender;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 public class TestChord {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, NoSuchAlgorithmException {
         System.setProperty("javax.net.ssl.trustStore","../../keys/truststore"); // CLIENT TRUST STORE
         System.setProperty("javax.net.ssl.trustStoreType","JKS");
         System.setProperty("javax.net.ssl.trustStorePassword", "123456");
@@ -15,7 +16,8 @@ public class TestChord {
         System.setProperty("javax.net.ssl.keyStorePassword", "123456");
 
         if(args[0].equals("CLIENT")) {
-            ThreadPool.getInstance().execute(new Sender("127.0.0.1", 8000));
+            Node node = new Node();
+            ThreadPool.getInstance().execute(new Sender("127.0.0.1", 8000, node.getNodeInfo().getId().toString()));
         } else if(args[0].equals("SERVER")) {
             Node node = new Node();
         }

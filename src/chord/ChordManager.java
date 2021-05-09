@@ -1,51 +1,56 @@
 package chord;
 
-import utils.Utils;
 import java.math.BigInteger;
-import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class ChordManager {
 
-    public void addNode(String IP, int port) {
+    public void addNode(BigInteger id) {
         // calcular ID, a partir do IP e da port
-        BigInteger id = null;
-        try {
-            id = Utils.hashID(new NodeInfo(IP, port));
-        } catch (NoSuchAlgorithmException e) {
-            System.err.println(e.getMessage());
-        }
 
-        // TODO: is buscar o IP e a porta do primeiro node, que está (num ficheiro)?? visível para todos
+        // TODO: ir buscar o IP e a porta do primeiro node(=GATE), que está visível para todos
         // ir buscar a fingerTable desse node
 
         FingerTable fingerTable = new FingerTable(); // TODO: change to first node finger table
 
-        boolean foundDeridedPlace = false;
-        while (!foundDeridedPlace) {
+        while (true) {
             BigInteger maxId = fingerTable.getMaxId();
 
-            if (maxId.compareTo(id) < 0) //
+            if (maxId.compareTo(id) < 0) {
+                //node a adicionar está além do maxID deste node
+
+                // IP PORT ADDNODE ID
+                fingerTable = getNextFingerTable(maxId);
                 continue;
+            }
 
             // percorrer a fingerTable para encontrar o lugar no novo node
 
             ConcurrentHashMap<BigInteger, NodeInfo> fingerTableMap = fingerTable.getFingerTable();
-            List<BigInteger> fingerTableKeys = new ArrayList<BigInteger>(fingerTableMap.keySet());
-            // Collections.sort(fingerTableKeys);
+            List<BigInteger> fingerTableKeys = new ArrayList<>(fingerTableMap.keySet());
+            Collections.sort(fingerTableKeys);
 
-            for (BigInteger nodeId: fingerTableMap.keySet()) {
-                if (nodeId.compareTo(id) > 0) {
+            for (int i = 0; i < fingerTableKeys.size(); i++) {
 
+                if (fingerTableKeys.get(i).compareTo(id) == 0) {
+                    // node a adicionar na posiçao id já existe nessa pos
+                }
+
+                if (fingerTableKeys.get(i).compareTo(id) > 0) {
+
+                    // mudar o antecessor do proximo node (nodeID)
+                    // mudar o sucessor no node anterior (nodeID anterior)
+                    // atualizar a localização dos ficheiros do próximo node
+
+                    // fazer set do sucessor -> sucessor = próximo node
+                    // fazer set no antecessor -> antecessor = node anterior
 
                 }
             }
-
-
-
-
+            break;
         }
 
         // Verificar se não é o próprio nó

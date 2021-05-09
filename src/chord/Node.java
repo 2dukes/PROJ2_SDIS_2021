@@ -11,38 +11,22 @@ import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Node {
-    private BigInteger id;
     private NodeInfo nodeInfo;
     private Listener listener;
 
-    // ConcurrentHashMap: Key - ID | Value - NodeIdentifier
     private FingerTable fingerTable;
 
-    private ConcurrentHashMap<BigInteger, NodeInfo> successor;
-    private ConcurrentHashMap<BigInteger, NodeInfo> predecessor;
+    private NodeInfo successor;
+    private NodeInfo predecessor;
 
     private ConcurrentHashMap<BigInteger, PeerFile> files;
 
-    public Node() throws IOException {
+    public Node() throws IOException, NoSuchAlgorithmException {
         String IP = InetAddress.getLocalHost().getHostAddress();
         this.listener = new Listener();
         ThreadPool.getInstance().execute(this.listener);
-        this.nodeInfo = new NodeInfo(IP, this.listener.getPort());
+        this.nodeInfo = new NodeInfo(IP, this.listener.getPort(), Utils.hashID(nodeInfo));
         this.fingerTable = new FingerTable();
-
-        try {
-            this.computeId();
-        } catch (NoSuchAlgorithmException e) {
-            System.err.println(e.getMessage());
-        }
-    }
-
-    private void computeId() throws NoSuchAlgorithmException {
-        this.id = Utils.hashID(nodeInfo);
-    }
-
-    public BigInteger getId() {
-        return id;
     }
 
     public FingerTable getFingerTable() {
@@ -57,25 +41,27 @@ public class Node {
         this.fingerTable.removeNode(id);
     }
 
-    public void setSuccessor(ConcurrentHashMap<BigInteger, NodeInfo> successor) {
+    public void setSuccessor(NodeInfo successor) {
         this.successor = successor;
     }
 
-    public ConcurrentHashMap<BigInteger, NodeInfo> getSuccessor() {
+    public NodeInfo getSuccessor() {
         return this.successor;
     }
 
-    public void setPredecessor(ConcurrentHashMap<BigInteger, NodeInfo> predecessor) {
+    public void setPredecessor(NodeInfo predecessor) {
         this.predecessor = predecessor;
     }
 
-    public ConcurrentHashMap<BigInteger, NodeInfo> getPredecessor() {
+    public NodeInfo getPredecessor() {
         return this.predecessor;
     }
 
     public PeerFile getPeerFile(BigInteger fileId) {
         return this.files.get(fileId);
     }
+
+    public NodeInfo getNodeInfo() { return nodeInfo; }
 
     public void addPeerFile(BigInteger fileId, PeerFile file) {
         this.files.put(fileId, file);
@@ -89,7 +75,7 @@ public class Node {
 
     // checks if the node is the one that is being searched
     public boolean isDesiredNode(BigInteger id) {
-        return id.compareTo(this.id) <= 0; // if id is less than or equal to it's own id
+        return id.compareTo(this.getNodeInfo().getId()) <= 0; // if id is less than or equal to it's own id
     }
 
 }
