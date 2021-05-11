@@ -18,7 +18,7 @@ public class Utils {
         String seed = nodeInfo.getAddress().getHostAddress() + ":" + nodeInfo.getPort();
         byte[] hash = md.digest(seed.getBytes(StandardCharsets.UTF_8));
 
-        BigInteger number = new BigInteger(1, hash).mod(Macros.numberOfBits.pow(2));
+        BigInteger number = new BigInteger(1, hash).mod(new BigInteger(String.valueOf((int) Math.pow(Macros.numberOfBits, 2))));
         return number;
     }
 

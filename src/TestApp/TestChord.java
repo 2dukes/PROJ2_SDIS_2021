@@ -2,7 +2,7 @@ package TestApp;
 
 import Threads.ThreadPool;
 import chord.Node;
-import messages.Sender;
+import dispatchers.Sender;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;

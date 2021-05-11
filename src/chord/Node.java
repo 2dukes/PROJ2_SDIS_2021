@@ -1,7 +1,9 @@
 package chord;
 
 import Threads.ThreadPool;
-import messages.Listener;
+import macros.Macros;
+import dispatchers.Listener;
+import messages.SendMessages.SendQuery;
 import utils.Utils;
 
 import java.io.IOException;
@@ -78,4 +80,20 @@ public class Node {
         return id.compareTo(this.getNodeInfo().getId()) <= 0; // if id is less than or equal to it's own id
     }
 
+    public void buildFingerTable() throws IOException {
+        BigInteger currentId = this.nodeInfo.getId();
+        for (int i = 0; i < Macros.numberOfBits; i++) {
+            BigInteger newCurrentId = currentId.add(new BigInteger(String.valueOf((int) Math.pow(i, 2)))); // TODO: check if conversion from double to BigInteger is correct
+
+            if (newCurrentId.compareTo(this.successor.getId()) <= 0) {
+                fingerTable.addNode(this.successor.getId(), this.successor);
+            } else { // successor does the same thing to its successor, and so on...
+                new SendQuery(this.nodeInfo, this.successor, newCurrentId);
+            }
+        }
+    }
 }
+
+// replication -> 2ª replication -> dividir o hash por 2 (ou aplicar uma função determinística, sendo o input o número da replicação)
+//             -> 3ª replication -> dividir o hash por 3
+//             ...

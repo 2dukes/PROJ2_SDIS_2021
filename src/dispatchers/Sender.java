@@ -1,15 +1,16 @@
-package messages;
+package dispatchers;
 
 import jsse.JSSEClientConnection;
 
 import java.io.IOException;
+import java.net.InetAddress;
 
 public class Sender implements Runnable {
     JSSEClientConnection connection;
     String msg;
 
-    public Sender(String IP, int port, String msg) throws IOException {
-        this.connection = new JSSEClientConnection(IP, port);
+    public Sender(InetAddress address, int port, String msg) throws IOException {
+        this.connection = new JSSEClientConnection(address.getHostAddress(), port);
         this.msg = msg;
     }
 
