@@ -19,15 +19,20 @@ public class Node {
     public static ConcurrentHashMap<BigInteger, PeerFile> files;
 
     public Node() throws IOException, NoSuchAlgorithmException {
-        String IP = InetAddress.getLocalHost().getHostAddress();
-        Listener listener = new Listener();
-        ThreadPool.getInstance().execute(listener);
-        ThreadPool.getInstance().scheduleAtFixedRate(new BuildFingerTable(), 0, 500, TimeUnit.MILLISECONDS);
-        ThreadPool.getInstance().scheduleAtFixedRate(new Stabilize(), 0, 500, TimeUnit.MILLISECONDS);
-        Node.nodeInfo = new NodeInfo(IP, listener.getPort(), Utils.hashID(IP, listener.getPort()));
-        Node.fingerTable = new FingerTable();
-        Node.successor = Node.nodeInfo;
-        Node.predecessor = Node.nodeInfo;
+        try {
+            String IP = InetAddress.getLocalHost().getHostAddress();
+            Listener listener = new Listener();
+            Node.nodeInfo = new NodeInfo(IP, listener.getPort(), Utils.hashID(IP, listener.getPort()));
+            Node.fingerTable = new FingerTable();
+            Node.successor = Node.nodeInfo;
+            Node.predecessor = Node.nodeInfo;
+
+            ThreadPool.getInstance().execute(listener);
+            ThreadPool.getInstance().scheduleAtFixedRate(new BuildFingerTable(), 0, 2500, TimeUnit.MILLISECONDS);
+            ThreadPool.getInstance().scheduleAtFixedRate(new Stabilize(), 0, 2500, TimeUnit.MILLISECONDS);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void addToFingerTable(BigInteger id, NodeInfo nodeInfo) {

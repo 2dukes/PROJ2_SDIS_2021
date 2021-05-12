@@ -37,7 +37,7 @@ public class AddNode implements Runnable {
 
         List<NodeInfo> visitedInfos = new ArrayList<>();
         for (int i = 0; i < Macros.numberOfBits; i++) {
-            BigInteger newCurrentId = Node.nodeInfo.getId().add(new BigInteger(String.valueOf((int) Math.pow(i, 2)))); // TODO: check if conversion from double to BigInteger is correct
+            BigInteger newCurrentId = Node.nodeInfo.getId().add(new BigInteger(String.valueOf((int) Math.pow(2, i)))); // TODO: check if conversion from double to BigInteger is correct
 
             if (this.toAddNodeInfo.getId().compareTo(newCurrentId) == 0 && Node.fingerTable.getFingerTable().get(newCurrentId).getId().compareTo(newCurrentId) == 0) {
                 System.err.println("Cannot create a node with ID = " + newCurrentId + ", because a node with that ID already exists.");

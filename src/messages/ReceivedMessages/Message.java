@@ -26,8 +26,8 @@ public abstract class Message implements Runnable {
         this.msgType = splitMsg[3];
 
         String[] newMsg = new String[10];
-        for (int i = 3; i < this.splitMsg.length; i++)
-            newMsg[i-3] = this.splitMsg[i];
+        for (int i = 4; i < this.splitMsg.length; i++)
+            newMsg[i-4] = this.splitMsg[i];
 
         this.splitMsg = newMsg;
     }

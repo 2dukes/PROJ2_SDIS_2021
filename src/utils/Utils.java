@@ -1,14 +1,11 @@
 package utils;
 
-import chord.NodeInfo;
 import macros.Macros;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.nio.charset.StandardCharsets;
-import java.rmi.AlreadyBoundException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -19,15 +16,15 @@ public class Utils {
         String seed = IP + ":" + port;
         byte[] hash = md.digest(seed.getBytes(StandardCharsets.UTF_8));
 
-        BigInteger number = new BigInteger(1, hash).mod(new BigInteger(String.valueOf((int) Math.pow(Macros.numberOfBits, 2))));
+        BigInteger number = new BigInteger(1, hash).mod(new BigInteger(String.valueOf((int) Math.pow(2, Macros.numberOfBits))));
         return number;
     }
 
     public static Integer getAvailablePort() throws IOException {
         try {
-            ServerSocket s = new ServerSocket(8000);
+            ServerSocket s = new ServerSocket(6969);
             s.close();
-            return 8000;
+            return 6969;
         } catch(IOException e) {
             ServerSocket s = new ServerSocket(0);
             s.close();

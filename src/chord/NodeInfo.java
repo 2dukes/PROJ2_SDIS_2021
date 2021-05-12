@@ -33,10 +33,16 @@ public class NodeInfo {
         return this.port;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NodeInfo nodeInfo = (NodeInfo) o;
+        return java.util.Objects.equals(id, nodeInfo.id);
+    }
 
-@Override public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    NodeInfo nodeInfo = (NodeInfo) o;
-    return java.util.Objects.equals(id, nodeInfo.id);
-}}
+    @Override
+    public String toString() {
+        return "IP=" + this.address.getHostAddress() + " Port=" + this.port + " ID=" + this.id;
+    }
+}
