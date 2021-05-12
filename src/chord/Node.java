@@ -1,7 +1,6 @@
 package chord;
 
 import Threads.ThreadPool;
-import macros.Macros;
 import dispatchers.Listener;
 import utils.Utils;
 
@@ -15,10 +14,8 @@ import java.util.concurrent.TimeUnit;
 public class Node {
     public static NodeInfo nodeInfo;
     public static FingerTable fingerTable;
-
     public static NodeInfo successor;
     public static NodeInfo predecessor;
-
     public static ConcurrentHashMap<BigInteger, PeerFile> files;
 
     public Node() throws IOException, NoSuchAlgorithmException {
@@ -27,10 +24,10 @@ public class Node {
         ThreadPool.getInstance().execute(listener);
         ThreadPool.getInstance().scheduleAtFixedRate(new BuildFingerTable(), 0, 500, TimeUnit.MILLISECONDS);
         ThreadPool.getInstance().scheduleAtFixedRate(new Stabilize(), 0, 500, TimeUnit.MILLISECONDS);
-        Node.nodeInfo = new NodeInfo(IP, listener.getPort(), Utils.hashID(nodeInfo));
+        Node.nodeInfo = new NodeInfo(IP, listener.getPort(), Utils.hashID(IP, listener.getPort()));
         Node.fingerTable = new FingerTable();
-        Node.successor = nodeInfo;
-        Node.predecessor = nodeInfo;
+        Node.successor = Node.nodeInfo;
+        Node.predecessor = Node.nodeInfo;
     }
 
     public static void addToFingerTable(BigInteger id, NodeInfo nodeInfo) {
@@ -47,11 +44,6 @@ public class Node {
         // TODO: ping to the predecessor node periodically and check if it answers
 
         return false;
-    }
-
-    // checks if the node is the one that is being searched
-    public boolean isDesiredNode(BigInteger id) {
-        return id.compareTo(Node.nodeInfo.getId()) <= 0; // if id is less than or equal to it's own id
     }
 }
 

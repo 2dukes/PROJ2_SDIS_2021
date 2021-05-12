@@ -34,4 +34,9 @@ public class NodeInfo {
     }
 
 
-}
+@Override public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    NodeInfo nodeInfo = (NodeInfo) o;
+    return java.util.Objects.equals(id, nodeInfo.id);
+}}

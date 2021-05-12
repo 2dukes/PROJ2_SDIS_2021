@@ -15,13 +15,15 @@ public class ReceivedSetPredecessor extends Message {
 
     @Override
     public void run() {
-        // Need to change logic
         if (this.ID.compareTo(Node.nodeInfo.getId()) != 0) {
-            NodeInfo newPredecessor = new NodeInfo(this.IP, this.port, this.ID);
-            if (!newPredecessor.equals(Node.nodeInfo)) {
-                Node.successor = newPredecessor;
+            NodeInfo senderNodeInfo = new NodeInfo(this.IP, this.port, this.ID);
+            if (!senderNodeInfo.equals(Node.predecessor)) {
+                try {
+                    new messages.SendMessages.SendSetSuccessor(Node.nodeInfo, Node.predecessor, senderNodeInfo);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-
         } else {
             System.err.println("Tried to receive message from myself.");
         }
