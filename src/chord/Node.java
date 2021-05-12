@@ -3,7 +3,6 @@ package chord;
 import Threads.ThreadPool;
 import macros.Macros;
 import dispatchers.Listener;
-import messages.SendMessages.SendQuery;
 import utils.Utils;
 
 import java.io.IOException;
@@ -11,63 +10,38 @@ import java.math.BigInteger;
 import java.net.InetAddress;
 import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 public class Node {
-    private NodeInfo nodeInfo;
-    private Listener listener;
+    public static NodeInfo nodeInfo;
+    public static FingerTable fingerTable;
 
-    private FingerTable fingerTable;
+    public static NodeInfo successor;
+    public static NodeInfo predecessor;
 
-    private NodeInfo successor;
-    private NodeInfo predecessor;
-
-    private ConcurrentHashMap<BigInteger, PeerFile> files;
+    public static ConcurrentHashMap<BigInteger, PeerFile> files;
 
     public Node() throws IOException, NoSuchAlgorithmException {
         String IP = InetAddress.getLocalHost().getHostAddress();
-        this.listener = new Listener();
-        ThreadPool.getInstance().execute(this.listener);
-        this.nodeInfo = new NodeInfo(IP, this.listener.getPort(), Utils.hashID(nodeInfo));
-        this.fingerTable = new FingerTable();
+        Listener listener = new Listener();
+        ThreadPool.getInstance().execute(listener);
+        ThreadPool.getInstance().scheduleAtFixedRate(new BuildFingerTable(), 0, 500, TimeUnit.MILLISECONDS);
+        ThreadPool.getInstance().scheduleAtFixedRate(new Stabilize(), 0, 500, TimeUnit.MILLISECONDS);
+        Node.nodeInfo = new NodeInfo(IP, listener.getPort(), Utils.hashID(nodeInfo));
+        Node.fingerTable = new FingerTable();
+        Node.successor = nodeInfo;
+        Node.predecessor = nodeInfo;
     }
 
-    public FingerTable getFingerTable() {
-        return this.fingerTable;
+    public static void addToFingerTable(BigInteger id, NodeInfo nodeInfo) {
+        Node.fingerTable.addNode(id, nodeInfo);
     }
 
-    public void addToFingerTable(BigInteger id, NodeInfo nodeInfo) {
-        this.fingerTable.addNode(id, nodeInfo);
-    }
+    public static void removeFromFingerTable(BigInteger id) { Node.fingerTable.removeNode(id); }
 
-    public void removeFromFingerTable(BigInteger id) {
-        this.fingerTable.removeNode(id);
-    }
+    public static PeerFile getPeerFile(BigInteger fileId) { return Node.files.get(fileId); }
 
-    public void setSuccessor(NodeInfo successor) {
-        this.successor = successor;
-    }
-
-    public NodeInfo getSuccessor() {
-        return this.successor;
-    }
-
-    public void setPredecessor(NodeInfo predecessor) {
-        this.predecessor = predecessor;
-    }
-
-    public NodeInfo getPredecessor() {
-        return this.predecessor;
-    }
-
-    public PeerFile getPeerFile(BigInteger fileId) {
-        return this.files.get(fileId);
-    }
-
-    public NodeInfo getNodeInfo() { return nodeInfo; }
-
-    public void addPeerFile(BigInteger fileId, PeerFile file) {
-        this.files.put(fileId, file);
-    }
+    public static void addPeerFile(BigInteger fileId, PeerFile file) { Node.files.put(fileId, file); }
 
     public boolean checkPredecessorActive() {
         // TODO: ping to the predecessor node periodically and check if it answers
@@ -77,20 +51,7 @@ public class Node {
 
     // checks if the node is the one that is being searched
     public boolean isDesiredNode(BigInteger id) {
-        return id.compareTo(this.getNodeInfo().getId()) <= 0; // if id is less than or equal to it's own id
-    }
-
-    public void buildFingerTable() throws IOException {
-        BigInteger currentId = this.nodeInfo.getId();
-        for (int i = 0; i < Macros.numberOfBits; i++) {
-            BigInteger newCurrentId = currentId.add(new BigInteger(String.valueOf((int) Math.pow(i, 2)))); // TODO: check if conversion from double to BigInteger is correct
-
-            if (newCurrentId.compareTo(this.successor.getId()) <= 0) {
-                fingerTable.addNode(this.successor.getId(), this.successor);
-            } else { // successor does the same thing to its successor, and so on...
-                new SendQuery(this.nodeInfo, this.successor, newCurrentId);
-            }
-        }
+        return id.compareTo(Node.nodeInfo.getId()) <= 0; // if id is less than or equal to it's own id
     }
 }
 

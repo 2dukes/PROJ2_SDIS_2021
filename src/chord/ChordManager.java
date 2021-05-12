@@ -23,7 +23,7 @@ public class ChordManager {
                 //node a adicionar está além do maxID deste node
 
                 // IP PORT ADDNODE ID
-                fingerTable = getNextFingerTable(maxId);
+                // fingerTable = getNextFingerTable(maxId);
                 continue;
             }
 

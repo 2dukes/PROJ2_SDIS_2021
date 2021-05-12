@@ -5,6 +5,7 @@ import chord.Node;
 import dispatchers.Sender;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.security.NoSuchAlgorithmException;
 
 public class TestChord {
@@ -17,7 +18,7 @@ public class TestChord {
 
         if(args[0].equals("CLIENT")) {
             Node node = new Node();
-            ThreadPool.getInstance().execute(new Sender("127.0.0.1", 8000, node.getNodeInfo().getId().toString()));
+            ThreadPool.getInstance().execute(new Sender(InetAddress.getByName("localhost"), 8000, Node.nodeInfo.getId().toString()));
         } else if(args[0].equals("SERVER")) {
             Node node = new Node();
         }
