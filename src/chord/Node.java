@@ -28,8 +28,8 @@ public class Node {
             Node.predecessor = Node.nodeInfo;
 
             ThreadPool.getInstance().execute(listener);
-            ThreadPool.getInstance().scheduleAtFixedRate(new BuildFingerTable(), 0, 2500, TimeUnit.MILLISECONDS);
-            ThreadPool.getInstance().scheduleAtFixedRate(new Stabilize(), 0, 2500, TimeUnit.MILLISECONDS);
+            ThreadPool.getInstance().scheduleAtFixedRate(new BuildFingerTable(), 0, 5000, TimeUnit.MILLISECONDS);
+            ThreadPool.getInstance().scheduleAtFixedRate(new Stabilize(), 0, 5000, TimeUnit.MILLISECONDS);
         } catch(Exception e) {
             e.printStackTrace();
         }

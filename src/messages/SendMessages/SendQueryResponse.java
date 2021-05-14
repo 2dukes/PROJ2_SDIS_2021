@@ -17,7 +17,7 @@ public class SendQueryResponse {
             builder.append(currentNodeInfo.getPort()).append(" ");
             builder.append(currentNodeInfo.getId()).append(" ");
             builder.append("QUERY_RESPONSE ");
-            builder.append(lookupId);
+            builder.append(lookupId).append(" ");
             builder.append(lookedupId);
 
             ThreadPool.getInstance().execute(new Sender(contactingNodeInfo.getAddress(), contactingNodeInfo.getPort(), builder.toString()));
