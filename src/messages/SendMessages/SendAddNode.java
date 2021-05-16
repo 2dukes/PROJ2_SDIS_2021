@@ -16,7 +16,7 @@ public class SendAddNode {
         builder.append("ADD_NODE ");
         builder.append(toAddInfo.getAddress().getHostAddress()).append(" ");
         builder.append(toAddInfo.getPort()).append(" ");
-        builder.append(toAddInfo.getId());
+        builder.append(toAddInfo.getId()).append("\n");
 
         ThreadPool.getInstance().execute(new Sender(contactNodeInfo.getAddress(), contactNodeInfo.getPort(), builder.toString()));
     }

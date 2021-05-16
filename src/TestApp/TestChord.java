@@ -18,12 +18,19 @@ public class TestChord {
         System.setProperty("javax.net.ssl.keyStorePassword", "123456");
 
         if(args[0].equals("ADD_NODE")) {
-            new Node();
+            // new Node(args[1]);
+            if(args.length == 2)
+                new Node(args[1]);
+            else
+                new Node();
             new SendAddNode(Node.nodeInfo, Node.nodeInfo, new NodeInfo(InetAddress.getLocalHost().getHostAddress(), 6969, BigInteger.ZERO));
             // ThreadPool.getInstance().execute(new Sender(InetAddress.getByName("localhost"), 8000, Node.nodeInfo.getId().toString()));
         } else if(args[0].equals("START")) {
             // Start the network with 1 node (gate)
-            new Node();
+            if(args.length == 2)
+                new Node(args[1]);
+            else
+                new Node();
         }
         System.out.println(Node.nodeInfo.toString());
         //System.out.println("IP=" + Node.nodeInfo.getAddress().getHostAddress() +  " PORT=" + Node.nodeInfo.getPort() + " ID=" + Node.nodeInfo.getId());

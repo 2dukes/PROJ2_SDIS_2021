@@ -45,4 +45,6 @@ public class NodeInfo {
     public String toString() {
         return "IP=" + this.address.getHostAddress() + " Port=" + this.port + " ID=" + this.id;
     }
+
+    public void setId(BigInteger id) { this.id = id; }
 }

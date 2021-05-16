@@ -72,4 +72,6 @@ public class FingerTable {
     }
 
     public List<BigInteger> getKeysOrder() { return keysOrder; }
+
+    public BigInteger getLastKey() { return this.keysOrder.get(this.keysOrder.size() - 1); }
 }

@@ -30,12 +30,28 @@ public class BuildFingerTable implements Runnable {
                     Node.addToFingerTable(newCurrentId, Node.successor);
             } else { // successor does the same thing to its successor, and so on...
                 try {
-                    new SendQuery(Node.nodeInfo, Node.successor, newCurrentId);
+                    NodeInfo immediatePredecessor = getImmediatePredecessor(newCurrentId);
+                    new SendQuery(Node.nodeInfo, immediatePredecessor, newCurrentId);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }
+    }
+
+    public static NodeInfo getImmediatePredecessor(BigInteger newCurrentId) {
+        BigInteger maxNumberOfNodes = new BigInteger(String.valueOf((int) Math.pow(2, Macros.numberOfBits)));
+        BigInteger lookUpId = newCurrentId;
+        do {
+            for (BigInteger currentId : Node.fingerTable.getKeysOrder()) {
+                NodeInfo currentNodeInfo = Node.fingerTable.getNodeInfo(currentId);
+                if(currentNodeInfo.getId().compareTo(lookUpId) == 0)
+                    return currentNodeInfo;
+            }
+            lookUpId = lookUpId.subtract(BigInteger.ONE).mod(maxNumberOfNodes);
+        } while (lookUpId.compareTo(newCurrentId) != 0);
+
+        return Node.nodeInfo;
     }
 
     public void printFingerTable() {

@@ -5,9 +5,8 @@ import chord.NodeInfo;
 
 import java.math.BigInteger;
 
-// IP_RESPONSE PORT_RESPONSE ID_RESPONSE QUERY_RESPONSE LOOKUP_ID LOOKEDUP_ID -> Response
+// IP_RESPONSE PORT_RESPONSE ID_RESPONSE QUERY_RESPONSE LOOKUP_ID -> Response
 public class ReceivedQueryResponse extends Message {
-    BigInteger lookedUpId;
     BigInteger lookupId;
 
     public ReceivedQueryResponse(String msg) {
@@ -15,8 +14,7 @@ public class ReceivedQueryResponse extends Message {
     }
 
     public void parseSpecificMessage() {
-        this.lookedUpId = new BigInteger(this.splitMsg[0]);
-        this.lookupId = new BigInteger(this.splitMsg[1]);
+        this.lookupId = new BigInteger(this.splitMsg[0]);
     }
 
     @Override

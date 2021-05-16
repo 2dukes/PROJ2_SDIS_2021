@@ -25,7 +25,7 @@ public class Utils {
             ServerSocket s = new ServerSocket(6969);
             s.close();
             return 6969;
-        } catch(IOException e) {
+        } catch (IOException e) {
             ServerSocket s = new ServerSocket(0);
             s.close();
             return s.getLocalPort();

@@ -1,9 +1,7 @@
 package messages.ReceivedMessages;
 
-import Threads.ThreadPool;
 import chord.Node;
 import chord.NodeInfo;
-import macros.Macros;
 import messages.SendMessages.*;
 
 import java.io.IOException;
@@ -29,40 +27,45 @@ public class ReceivedQuery extends Message {
             NodeInfo answerNodeInfo = new NodeInfo(this.IP, this.port, this.ID);
 
             BigInteger leftSideInterval, rightSideInterval;
-            BigInteger lookUpId = answerNodeInfo.getId();
             List<NodeInfo> visitedInfos = new ArrayList<>();
 
+            BigInteger previousElement = Node.nodeInfo.getId();
             for (BigInteger i : Node.fingerTable.getKeysOrder()) {
                 if(i.compareTo(Node.nodeInfo.getId()) > 0) {
                     leftSideInterval = Node.nodeInfo.getId();
                     rightSideInterval = i;
 
-                    if(lookUpId.compareTo(leftSideInterval) >= 0 && lookUpId.compareTo(rightSideInterval) <= 0) {
+                    if(this.lookupId.compareTo(leftSideInterval) >= 0 && this.lookupId.compareTo(rightSideInterval) <= 0) {
                         try {
-                            new SendQueryResponse(Node.fingerTable.getFingerTable().get(i), answerNodeInfo, this.ID, this.lookupId);
+                            new SendQueryResponse(Node.fingerTable.getFingerTable().get(i),
+                                    answerNodeInfo,
+                                    this.lookupId);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                         return;
                     }
                 } else {
-                    leftSideInterval = BigInteger.ZERO;
+                    leftSideInterval = previousElement;
                     rightSideInterval = i;
-                    if(lookUpId.compareTo(leftSideInterval) >= 0 && lookUpId.compareTo(rightSideInterval) <= 0) {
+                    if(this.lookupId.compareTo(leftSideInterval) >= 0 || this.lookupId.compareTo(rightSideInterval) <= 0) {
                         try {
-                            new SendQueryResponse(Node.fingerTable.getFingerTable().get(i), answerNodeInfo, this.ID, this.lookupId);
+                            new SendQueryResponse(Node.fingerTable.getFingerTable().get(i),
+                                    answerNodeInfo,
+                                    this.lookupId);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                         return;
                     }
                 }
+                previousElement = i;
                 visitedInfos.add(Node.fingerTable.getFingerTable().get(i));
             }
 
             try {
                 new SendQuery(answerNodeInfo,
-                        Node.fingerTable.getNodeInfo(visitedInfos.get(visitedInfos.size() - 1).getId()),
+                        visitedInfos.get(visitedInfos.size() - 1),
                         this.lookupId);
             } catch (IOException e) {
                 e.printStackTrace();

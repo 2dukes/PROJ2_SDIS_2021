@@ -19,10 +19,10 @@ public class Stabilize implements Runnable {
     }
 
     public void printSuccessorAndPredecessor() {
-        System.out.print("Successor of node " + Node.nodeInfo.getId() + ": ");
+        System.out.print("Successor of node " + Node.nodeInfo.getId() + " => ");
         System.out.println(Node.successor.getId());
 
-        System.out.print("Predecessor of node " + Node.nodeInfo.getId() + ": ");
+        System.out.print("Predecessor of node " + Node.nodeInfo.getId() + " => ");
         System.out.println(Node.predecessor.getId());
     }
 }
