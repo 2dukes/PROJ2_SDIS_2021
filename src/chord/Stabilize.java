@@ -26,13 +26,3 @@ public class Stabilize implements Runnable {
         System.out.println(Node.predecessor.getId());
     }
 }
-
-/*
-    REQUEST PREDECESSOR (it's now necessary, because the thread is always running)
-    IP_ORIG PORT_ORIG ID_ORIG ASK_PRED -> Request
-
-    // RESPOND WITH PREDECESSOR
-    IP_ORIG PORT_ORIG ID_ORIG SET_PRED
-
-
- */

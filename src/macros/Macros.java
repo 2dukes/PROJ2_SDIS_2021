@@ -1,5 +1,5 @@
 package macros;
 
 public interface Macros {
-    int numberOfBits = 3;
+    int numberOfBits = 5;
 }

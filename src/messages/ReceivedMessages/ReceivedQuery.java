@@ -30,14 +30,15 @@ public class ReceivedQuery extends Message {
             List<NodeInfo> visitedInfos = new ArrayList<>();
 
             BigInteger previousElement = Node.nodeInfo.getId();
-            for (BigInteger i : Node.fingerTable.getKeysOrder()) {
+            for (BigInteger j : Node.fingerTable.getKeysOrder()) {
+                BigInteger i = Node.fingerTable.getNodeInfo(j).getId();
                 if(i.compareTo(Node.nodeInfo.getId()) > 0) {
                     leftSideInterval = Node.nodeInfo.getId();
                     rightSideInterval = i;
 
                     if(this.lookupId.compareTo(leftSideInterval) >= 0 && this.lookupId.compareTo(rightSideInterval) <= 0) {
                         try {
-                            new SendQueryResponse(Node.fingerTable.getFingerTable().get(i),
+                            new SendQueryResponse(Node.fingerTable.getFingerTable().get(j),
                                     answerNodeInfo,
                                     this.lookupId);
                         } catch (IOException e) {
@@ -50,7 +51,7 @@ public class ReceivedQuery extends Message {
                     rightSideInterval = i;
                     if(this.lookupId.compareTo(leftSideInterval) >= 0 || this.lookupId.compareTo(rightSideInterval) <= 0) {
                         try {
-                            new SendQueryResponse(Node.fingerTable.getFingerTable().get(i),
+                            new SendQueryResponse(Node.fingerTable.getFingerTable().get(j),
                                     answerNodeInfo,
                                     this.lookupId);
                         } catch (IOException e) {

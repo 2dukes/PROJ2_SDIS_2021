@@ -1,12 +1,10 @@
 package messages.SendMessages;
 
 import Threads.ThreadPool;
-import chord.Node;
 import chord.NodeInfo;
 import dispatchers.Sender;
 
 import java.io.IOException;
-import java.math.BigInteger;
 
 // IP_ORIG PORT_ORIG ID_ORIG SET_PRED
 public class SendSetPredecessor {

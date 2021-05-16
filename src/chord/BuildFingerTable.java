@@ -2,12 +2,9 @@ package chord;
 
 import macros.Macros;
 import messages.SendMessages.SendQuery;
-import messages.SendMessages.SendQueryResponse;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
 
 public class BuildFingerTable implements Runnable {
 

@@ -18,7 +18,6 @@ public class Node {
     public static NodeInfo predecessor;
     public static ConcurrentHashMap<BigInteger, PeerFile> files;
 
-
     public Node() throws IOException, NoSuchAlgorithmException {
         try {
             String IP = InetAddress.getLocalHost().getHostAddress();
