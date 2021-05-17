@@ -24,11 +24,24 @@ public class AddNode implements Runnable {
         new SendAddNodeSetPredecessor(Node.nodeInfo, this.toAddNodeInfo, Node.successor);
     }
 
+    public boolean checkRepeatedNodeFT() {
+        List<BigInteger> keysOrder = Node.fingerTable.getKeysOrder();
+        NodeInfo element;
+
+        for(int i = keysOrder.size() - 1; i >= 0; i--) {
+            element = Node.fingerTable.getNodeInfo(keysOrder.get(i));
+            if(element.getId().compareTo(toAddNodeInfo.getId()) == 0)
+                return true;
+        }
+
+        return false;
+    }
+
     @Override
     public void run() {
         BigInteger lookUpId = toAddNodeInfo.getId();
 
-        if (lookUpId.compareTo(Node.successor.getId()) == 0 || lookUpId.compareTo(Node.nodeInfo.getId()) == 0) { // Node a inserir já existe
+        if (checkRepeatedNodeFT() || lookUpId.compareTo(Node.successor.getId()) == 0 || lookUpId.compareTo(Node.nodeInfo.getId()) == 0) { // Node a inserir já existe
             System.err.println("Cannot create a node with ID = " + lookUpId + ", because a node with that ID already exists.");
             return;
         }
@@ -61,7 +74,7 @@ public class AddNode implements Runnable {
         try {
             NodeInfo previousNodeInfo = getClosestPrecedingNode(lookUpId);
             if (previousNodeInfo != null && previousNodeInfo.equals(Node.nodeInfo)) {
-                System.err.println("Cannot send ADD_NODE to itself!");
+                System.err.println("Cannot send ADD_NODE to myself!");
                 return;
             }
             if (previousNodeInfo == null)
