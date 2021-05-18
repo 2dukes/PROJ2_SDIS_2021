@@ -2,21 +2,48 @@ package chord;
 
 import Threads.ThreadPool;
 import dispatchers.Listener;
+import rmi.RMIService;
+import storage.PeerFile;
 import utils.Utils;
 
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.InetAddress;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.RMIClassLoaderSpi;
+import java.rmi.server.UnicastRemoteObject;
 import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-public class Node {
+public class Node implements RMIService {
     public static NodeInfo nodeInfo;
     public static FingerTable fingerTable;
     public static NodeInfo successor;
     public static NodeInfo predecessor;
     public static ConcurrentHashMap<BigInteger, PeerFile> files;
+/*
+    // ACCESS_POINT
+    public void main(String[] args) {
+        try {
+            System.setProperty("javax.net.ssl.trustStore","../../keys/truststore"); // CLIENT TRUST STORE
+            System.setProperty("javax.net.ssl.trustStoreType","JKS");
+            System.setProperty("javax.net.ssl.trustStorePassword", "123456");
+            System.setProperty("javax.net.ssl.keyStore","../../keys/server.keys");
+            System.setProperty("javax.net.ssl.keyStorePassword", "123456");
+
+            String accessPoint = args[0];
+            Remote obj = (Remote) new Node();
+            RMIService stub = (RMIService) UnicastRemoteObject.exportObject(obj, 0);
+            Registry registry = LocateRegistry.getRegistry();
+            registry.rebind(accessPoint, (Remote) stub);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }*/
 
     public Node() throws IOException, NoSuchAlgorithmException {
         try {
@@ -68,8 +95,20 @@ public class Node {
 
         return false;
     }
-}
 
-// replication -> 2ª replication -> dividir o hash por 2 (ou aplicar uma função determinística, sendo o input o número da replicação)
-//             -> 3ª replication -> dividir o hash por 3
-//             ...
+    public void backup(String path, int replicationDeg) throws RemoteException {
+        System.out.println("BACKING UP...");
+
+        PeerFile peerFile = new PeerFile(path, replicationDeg);
+
+        for (int i = 0; i < replicationDeg; i++) {
+            BigInteger fileId = peerFile.computeId(i);
+            System.out.print("ID of file " + i + ": ");
+            System.out.println(fileId);
+            /*String fileContent = new String(peerFile.getData());
+            System.out.println(fileContent);*/
+        }
+    }
+
+
+}

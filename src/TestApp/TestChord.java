@@ -2,11 +2,17 @@ package TestApp;
 
 import chord.Node;
 import chord.NodeInfo;
+import macros.Macros;
 import messages.SendMessages.SendAddNode;
+import rmi.RMIService;
 
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.InetAddress;
+import java.rmi.Remote;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.security.NoSuchAlgorithmException;
 
 public class TestChord {
@@ -17,23 +23,24 @@ public class TestChord {
         System.setProperty("javax.net.ssl.keyStore","../../keys/server.keys");
         System.setProperty("javax.net.ssl.keyStorePassword", "123456");
 
-        if(args[0].equals("ADD_NODE")) {
-            // new Node(args[1]);
-            if(args.length == 2)
-                new Node(args[1]);
-            else
-                new Node();
-            new SendAddNode(Node.nodeInfo, Node.nodeInfo, new NodeInfo(InetAddress.getLocalHost().getHostAddress(), 6969, BigInteger.ZERO));
-            // ThreadPool.getInstance().execute(new Sender(InetAddress.getByName("localhost"), 8000, Node.nodeInfo.getId().toString()));
-        } else if(args[0].equals("START")) {
-            // Start the network with 1 node (gate)
-            if(args.length == 2)
-                new Node(args[1]);
-            else
-                new Node();
-        }
+        // Usage:
+        // ACCESS_POINT
+        // ACCESS_POINT
+
+        Node node = new Node();
+
+        /*Node node = args.length == 3 ? new Node(args[2]) : new Node();*/
+
+        String accessPoint = args[0];
+        Remote obj = node;
+        RMIService stub = (RMIService) UnicastRemoteObject.exportObject(obj, 0);
+        Registry registry = LocateRegistry.getRegistry();
+        registry.rebind(accessPoint, stub);
+
+        if(Node.nodeInfo.getPort() != Macros.gatePort) // Not Gate
+            new SendAddNode(Node.nodeInfo, Node.nodeInfo, new NodeInfo(InetAddress.getLocalHost().getHostAddress(), Macros.gatePort, BigInteger.ZERO));
+
         System.out.println(Node.nodeInfo.toString());
         //System.out.println("IP=" + Node.nodeInfo.getAddress().getHostAddress() +  " PORT=" + Node.nodeInfo.getPort() + " ID=" + Node.nodeInfo.getId());
-        System.out.println("TestApp");
     }
 }
