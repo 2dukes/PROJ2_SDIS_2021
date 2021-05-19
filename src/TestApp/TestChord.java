@@ -25,7 +25,6 @@ public class TestChord {
 
         // Usage:
         // ACCESS_POINT
-        // ACCESS_POINT
 
         Node node = new Node();
 
