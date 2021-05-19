@@ -1,5 +1,6 @@
 package chord;
 
+import Threads.IssueMessage;
 import Threads.ThreadPool;
 import dispatchers.Listener;
 import messages.SendMessages.SendFile;
@@ -82,13 +83,13 @@ public class Node implements RMIService {
             PeerFileBackedUp copyPeerFile = peerFile.clone();
             int replicationNumber = 0;
             int peerStoredCount = 0;
-            while(peerStoredCount < replicationDeg) {
+            while (peerStoredCount < replicationDeg) {
                 BigInteger fileId = copyPeerFile.computeId(replicationNumber);
                 if(fileId.compareTo(nodeInfo.getId()) != 0) {
                     System.out.print("ID of file " + replicationNumber + ": ");
                     System.out.println(fileId);
 
-                    new SendFile(copyPeerFile, replicationNumber);
+                    ThreadPool.getInstance().execute(new IssueMessage(copyPeerFile, replicationNumber));
                     peerStoredCount++;
                 }
                 replicationNumber++;
