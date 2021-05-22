@@ -36,9 +36,8 @@ public class TestApp {
                     }
                 }
                 case "DELETE" -> {
-                    System.out.println("Deleting...");
-                    /*path = args[2].trim();
-                    initiatorPeer.delete(path);*/
+                    path = args[2].trim();
+                    initiatorPeer.delete(path);
                 }
                 case "RESTORE" -> {
                     System.out.println("Restoring...");

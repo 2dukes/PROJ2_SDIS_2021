@@ -3,9 +3,12 @@ package chord;
 import Threads.IssueMessage;
 import Threads.ThreadPool;
 import dispatchers.Listener;
+import macros.Macros;
+import messages.SendMessages.SendDeleteFile;
 import messages.SendMessages.SendFile;
 import rmi.RMIService;
 import storage.NodeStorage;
+import storage.PeerFile;
 import storage.PeerFileBackedUp;
 import utils.Utils;
 
@@ -89,7 +92,7 @@ public class Node implements RMIService {
                     System.out.print("ID of file " + replicationNumber + ": ");
                     System.out.println(fileId);
 
-                    ThreadPool.getInstance().execute(new IssueMessage(copyPeerFile, replicationNumber));
+                    ThreadPool.getInstance().execute(new IssueMessage(copyPeerFile, replicationNumber, Macros.MSGTYPE.BACKUP));
                     peerStoredCount++;
                 }
                 else {
@@ -102,5 +105,35 @@ public class Node implements RMIService {
         }
     }
 
+    public void delete(String path) throws RemoteException {
+        System.out.println("DELETING...");
+
+        PeerFileBackedUp fileToDelete = storage.getFileByPath(path);
+
+        if (fileToDelete == null) {
+            System.err.println("There is no file with path: " + path);
+            return;
+        }
+
+        int replicationNumber = 0;
+        int peerCount = 0;
+        try {
+            while (peerCount < fileToDelete.getReplicationDeg()) {
+                PeerFileBackedUp copyPeerFile = fileToDelete.clone();
+                BigInteger fileId = copyPeerFile.computeId(replicationNumber);
+                if(fileId.compareTo(nodeInfo.getId()) != 0) {
+                    System.out.print("Deleted file with ID: " + fileId);
+
+                    ThreadPool.getInstance().execute(new IssueMessage(copyPeerFile, replicationNumber, Macros.MSGTYPE.DELETE));
+                    peerCount++;
+                }
+
+                replicationNumber++;
+            }
+            storage.removeFileBackedUp(fileToDelete.getFileId());
+        } catch (CloneNotSupportedException | IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

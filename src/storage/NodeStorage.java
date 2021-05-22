@@ -92,4 +92,13 @@ public class NodeStorage {
     public void removeFileBackedUp(BigInteger fileId) {
         this.filesBackedUp.remove(fileId);
     }
+
+    public PeerFileBackedUp getFileByPath(String path) {
+        for (BigInteger fileId: this.filesBackedUp.keySet()) {
+            PeerFileBackedUp file = this.getFileBackedUp(fileId);
+            if (file.getPath().equals(path))
+                return file;
+        }
+        return null;
+    }
 }

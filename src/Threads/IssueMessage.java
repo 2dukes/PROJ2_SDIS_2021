@@ -3,7 +3,9 @@ package Threads;
 import chord.Node;
 import chord.NodeInfo;
 import jsse.JSSEServerConnection;
+import macros.Macros;
 import messages.ReceivedMessages.ReceivedQueryResponse;
+import messages.SendMessages.SendDeleteFile;
 import messages.SendMessages.SendFile;
 import messages.SendMessages.SendQuery;
 import storage.PeerFile;
@@ -15,13 +17,15 @@ public class IssueMessage implements Runnable {
     NodeInfo originalInfo;
     PeerFile file;
     int replicationNumber;
+    Macros.MSGTYPE msgType;
 
-    public IssueMessage(PeerFile file, int replicationNumber) throws IOException {
+    public IssueMessage(PeerFile file, int replicationNumber, Macros.MSGTYPE msgType) throws IOException {
         this.connection = new JSSEServerConnection();
         this.file = file;
         this.replicationNumber = replicationNumber;
         this.originalInfo = new NodeInfo(Node.nodeInfo.getAddress().getHostAddress(),
                 this.connection.getPort(), Node.nodeInfo.getId());
+        this.msgType = msgType;
     }
 
     @Override
@@ -34,7 +38,11 @@ public class IssueMessage implements Runnable {
             ReceivedQueryResponse queryResponse = new ReceivedQueryResponse(receivedMsg);
             NodeInfo destinationNodeInfo = new NodeInfo(queryResponse.getIP(), queryResponse.getPort(), queryResponse.getID());
 
-            new SendFile(this.file, this.replicationNumber, destinationNodeInfo);
+            switch (this.msgType) {
+                case BACKUP -> new SendFile(this.file, this.replicationNumber, destinationNodeInfo);
+                case DELETE -> new SendDeleteFile(Node.nodeInfo, destinationNodeInfo, this.file.getFileId());
+                default -> System.err.println("Invalid message type in IssueMessage.");
+            }
 
         } catch (IOException e) {
             e.printStackTrace();

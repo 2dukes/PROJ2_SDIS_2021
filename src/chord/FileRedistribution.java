@@ -29,13 +29,11 @@ public class FileRedistribution implements Runnable {
     public void run() {
         List<BigInteger> fileIds = Node.storage.getFilesStoredIds();
         BigInteger maxNumberOfNodes = new BigInteger(String.valueOf((int) Math.pow(2, Macros.numberOfBits)));
-        System.out.println("ENTRANDO...");
+
         for (BigInteger currentFileId: fileIds) {
-            System.out.println("ENVIANDO " + currentFileId + " ....");
             if(Node.predecessor.getId().compareTo(Node.nodeInfo.getId()) < 0 && // Não deu a volta
                     Node.predecessor.getId().compareTo(currentFileId) <= 0
                     && currentFileId.compareTo(this.newPredecessor.getId()) <= 0){
-                System.out.println("Hello 1");
                 redistributeFile(currentFileId);
             }
             else if(Node.predecessor.getId().compareTo(Node.nodeInfo.getId()) > 0) { // Deu a volta
