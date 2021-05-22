@@ -17,6 +17,8 @@ import java.math.BigInteger;
 import java.net.InetAddress;
 import java.rmi.RemoteException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class Node implements RMIService {
@@ -25,6 +27,7 @@ public class Node implements RMIService {
     public static NodeInfo successor;
     public static NodeInfo predecessor;
     public static NodeStorage storage;
+    public static List<BigInteger> fileIdsConsultedForRestore;
 
     public Node() throws IOException, NoSuchAlgorithmException {
         try {
@@ -131,6 +134,38 @@ public class Node implements RMIService {
                 replicationNumber++;
             }
             storage.removeFileBackedUp(fileToDelete.getFileId());
+        } catch (CloneNotSupportedException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void restore(String path) throws RemoteException {
+        System.out.println("RESTORING...");
+
+        Node.fileIdsConsultedForRestore = new ArrayList<>();
+
+        PeerFileBackedUp fileToRestore = storage.getFileByPath(path);
+
+        if (fileToRestore == null) {
+            System.err.println("There is no file with path: " + path);
+            return;
+        }
+
+        int replicationNumber = 0;
+        int peerCount = 0;
+        try {
+            while (peerCount < fileToRestore.getReplicationDeg()) {
+                PeerFileBackedUp copyPeerFile = fileToRestore.clone();
+                BigInteger fileId = copyPeerFile.computeId(replicationNumber);
+                if(fileId.compareTo(nodeInfo.getId()) != 0) {
+                    Node.fileIdsConsultedForRestore.add(fileId);
+                    System.out.print("Restored file with ID: " + fileId);
+
+                    ThreadPool.getInstance().execute(new IssueMessage(copyPeerFile, replicationNumber, Macros.MSGTYPE.RESTORE));
+                    peerCount++;
+                }
+                replicationNumber++;
+            }
         } catch (CloneNotSupportedException | IOException e) {
             e.printStackTrace();
         }

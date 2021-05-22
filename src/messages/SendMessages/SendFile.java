@@ -25,7 +25,7 @@ public class SendFile {
             builder.append(peerFile.getName()).append(" ");
             builder.append(peerFile.getReplicationDeg()).append(" ");
             builder.append(replicationNumber).append(" ");
-            builder.append(new String(Base64.getEncoder().encode(peerFile.getData())));
+            builder.append(new String(Base64.getEncoder().encode(peerFile.getData()))).append("\n");
 
             ThreadPool.getInstance().execute(new Sender(destinationNodeInfo.getAddress(), destinationNodeInfo.getPort(), builder.toString()));
         } else {

@@ -43,6 +43,27 @@ public class NodeStorage {
         }
     }
 
+    public void createRestoredFile(String fileName, byte[] fileData) {
+        try {
+
+            String path = "../../resources/peers/" + Node.nodeInfo.getId() + "/restored/" + fileName;
+
+            File f = new File(path);
+            if (!f.exists()) {
+                f.getParentFile().mkdirs();
+                f.createNewFile();
+            }
+
+            System.out.println("Creating the restored file...");
+            FileOutputStream file = new FileOutputStream(path);
+            file.write(fileData);
+
+            file.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void addStoredFile(PeerFileStored file) {
         try {
             if (file.getFileId() == null)

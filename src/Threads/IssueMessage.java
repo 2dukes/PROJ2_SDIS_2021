@@ -5,9 +5,7 @@ import chord.NodeInfo;
 import jsse.JSSEServerConnection;
 import macros.Macros;
 import messages.ReceivedMessages.ReceivedQueryResponse;
-import messages.SendMessages.SendDeleteFile;
-import messages.SendMessages.SendFile;
-import messages.SendMessages.SendQuery;
+import messages.SendMessages.*;
 import storage.PeerFile;
 
 import java.io.IOException;
@@ -41,6 +39,7 @@ public class IssueMessage implements Runnable {
             switch (this.msgType) {
                 case BACKUP -> new SendFile(this.file, this.replicationNumber, destinationNodeInfo);
                 case DELETE -> new SendDeleteFile(Node.nodeInfo, destinationNodeInfo, this.file.getFileId());
+                case RESTORE -> new SendAskRestoredFile(Node.nodeInfo, destinationNodeInfo, this.file.getFileId());
                 default -> System.err.println("Invalid message type in IssueMessage.");
             }
 

@@ -40,9 +40,8 @@ public class TestApp {
                     initiatorPeer.delete(path);
                 }
                 case "RESTORE" -> {
-                    System.out.println("Restoring...");
-                    /*path = args[2].trim();
-                    initiatorPeer.restore(path);*/
+                    path = args[2].trim();
+                    initiatorPeer.restore(path);
                 }
                 case "STATE" -> {
                     System.out.println("Asking for Peer State...");

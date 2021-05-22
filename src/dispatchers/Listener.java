@@ -45,6 +45,8 @@ public class Listener implements Runnable {
             case "ADD_NODE_SET_PRED" -> ThreadPool.getInstance().execute(new ReceivedAddNodeSetPredecessor(msg));
             case "FILE" -> ThreadPool.getInstance().execute(new ReceivedFile(msg));
             case "DELETE_FILE" -> ThreadPool.getInstance().execute(new ReceivedDeleteFile(msg));
+            case "ASK_RESTORED_FILE" -> ThreadPool.getInstance().execute(new ReceivedAskRestoredFile(msg));
+            case "RESTORED_FILE" -> ThreadPool.getInstance().execute(new ReceivedRestoredFile(msg));
             default -> System.err.println("Unknown Message Type:" + messageType);
         }
     }
