@@ -7,10 +7,8 @@ import messages.ReceivedMessages.ReceivedQueryResponse;
 import messages.SendMessages.SendFile;
 import messages.SendMessages.SendQuery;
 import storage.PeerFile;
-import storage.PeerFileBackedUp;
 
 import java.io.IOException;
-import java.math.BigInteger;
 
 public class IssueMessage implements Runnable {
     JSSEServerConnection connection;
@@ -36,7 +34,7 @@ public class IssueMessage implements Runnable {
             ReceivedQueryResponse queryResponse = new ReceivedQueryResponse(receivedMsg);
             NodeInfo destinationNodeInfo = new NodeInfo(queryResponse.getIP(), queryResponse.getPort(), queryResponse.getID());
 
-            new SendFile((PeerFileBackedUp) this.file, this.replicationNumber, destinationNodeInfo);
+            new SendFile(this.file, this.replicationNumber, destinationNodeInfo);
 
         } catch (IOException e) {
             e.printStackTrace();

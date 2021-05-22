@@ -21,7 +21,7 @@ public class SendQuery {
 
             ThreadPool.getInstance().execute(new Sender(successorNodeInfo.getAddress(), successorNodeInfo.getPort(), builder.toString()));
         } else {
-            System.err.println("Cannot send a message to myself");
+            System.err.println("Cannot send a message to myself (QUERY)");
         }
     }
 }

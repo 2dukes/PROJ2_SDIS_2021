@@ -80,10 +80,10 @@ public class Node implements RMIService {
         storage.addFileBackedUp(peerFile);
 
         try {
-            PeerFileBackedUp copyPeerFile = peerFile.clone();
             int replicationNumber = 0;
             int peerStoredCount = 0;
             while (peerStoredCount < replicationDeg) {
+                PeerFileBackedUp copyPeerFile = peerFile.clone();
                 BigInteger fileId = copyPeerFile.computeId(replicationNumber);
                 if(fileId.compareTo(nodeInfo.getId()) != 0) {
                     System.out.print("ID of file " + replicationNumber + ": ");
@@ -91,6 +91,9 @@ public class Node implements RMIService {
 
                     ThreadPool.getInstance().execute(new IssueMessage(copyPeerFile, replicationNumber));
                     peerStoredCount++;
+                }
+                else {
+                    System.err.println("Cannot upload a file to itself");
                 }
                 replicationNumber++;
             }

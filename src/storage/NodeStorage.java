@@ -6,6 +6,8 @@ import chord.NodeInfo;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class NodeStorage {
@@ -21,16 +23,18 @@ public class NodeStorage {
 
     public void createStoredFile(PeerFileStored peerFile) {
         try {
-            String filePath = "../../resources/peers/" + Node.nodeInfo.getId() + "/stored/" + peerFile.fileName;
+            String[] splitName = peerFile.getName().split("\\.");
+            String extension = splitName[splitName.length - 1];
+            peerFile.setPath("../../resources/peers/" + Node.nodeInfo.getId() + "/stored/" + peerFile.getFileId() + "." + extension);
 
-            File f = new File(filePath);
+            File f = new File(peerFile.getPath());
             if (!f.exists()) {
                 f.getParentFile().mkdirs();
                 f.createNewFile();
             }
 
             System.out.println("Storing file...");
-            FileOutputStream file = new FileOutputStream(filePath);
+            FileOutputStream file = new FileOutputStream(peerFile.getPath());
             file.write(peerFile.data);
 
             file.close();
@@ -61,6 +65,8 @@ public class NodeStorage {
         }
     }
 
+    public List<BigInteger> getFilesStoredIds() { return new ArrayList<>(this.filesStored.keySet()); }
+
     public PeerFileStored getStoredFile(BigInteger fileId) {
         return this.filesStored.get(fileId);
     }
@@ -74,6 +80,12 @@ public class NodeStorage {
     }
 
     public void removeStoredFile(BigInteger fileId) {
+        File f = new File(this.getStoredFile(fileId).getPath());
+        if (f.delete())
+            System.out.println("Deleted file with ID: " + fileId);
+        else
+            System.err.println("Failed to delete file with ID: " + fileId);
+
         this.filesStored.remove(fileId);
     }
 

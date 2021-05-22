@@ -26,7 +26,11 @@ public class TestChord {
         // Usage:
         // ACCESS_POINT
 
-        Node node = new Node();
+        Node node;
+        if(args.length > 1)
+            node = new Node(args[1]);
+        else
+            node = new Node();
 
         /*Node node = args.length == 3 ? new Node(args[2]) : new Node();*/
 
