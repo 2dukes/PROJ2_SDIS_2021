@@ -34,6 +34,7 @@ public class ReceivedRestoredFile extends Message {
     public void run() {
         if (this.hasContent) {
             Node.storage.createRestoredFile(this.fileName, this.fileData);
+            Node.fileIdsConsultedForRestore.clear();
         } else {
             // they didnt have the file, ask restored file to other node
             if(Node.fileIdsConsultedForRestore.size() > 1) {
