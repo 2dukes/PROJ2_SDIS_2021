@@ -10,6 +10,7 @@ import rmi.RMIService;
 import storage.NodeStorage;
 import storage.PeerFile;
 import storage.PeerFileBackedUp;
+import storage.PeerFileStored;
 import utils.Utils;
 
 import java.io.IOException;
@@ -153,19 +154,28 @@ public class Node implements RMIService {
 
         int replicationNumber = 0;
         int peerCount = 0;
+
         try {
             while (peerCount < fileToRestore.getReplicationDeg()) {
                 PeerFileBackedUp copyPeerFile = fileToRestore.clone();
                 BigInteger fileId = copyPeerFile.computeId(replicationNumber);
                 if(fileId.compareTo(nodeInfo.getId()) != 0) {
                     Node.fileIdsConsultedForRestore.add(fileId);
-                    System.out.print("Restored file with ID: " + fileId);
-
-                    ThreadPool.getInstance().execute(new IssueMessage(copyPeerFile, replicationNumber, Macros.MSGTYPE.RESTORE));
                     peerCount++;
                 }
                 replicationNumber++;
             }
+
+            PeerFileStored peerFileDummy = new PeerFileStored(
+                    Node.fileIdsConsultedForRestore.get(0),
+                    "",
+                    null,
+                    0,
+                    0
+            );
+
+            System.out.print("Restored file with ID: " + peerFileDummy.getFileId());
+            ThreadPool.getInstance().execute(new IssueMessage(peerFileDummy, 0, Macros.MSGTYPE.RESTORE));
         } catch (CloneNotSupportedException | IOException e) {
             e.printStackTrace();
         }
