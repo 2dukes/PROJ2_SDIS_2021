@@ -1,8 +1,10 @@
 package storage;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.math.BigInteger;
 
-public class PeerFileStored extends PeerFile implements Cloneable { //Files that the Peer backs up for other Peers
+public class PeerFileStored extends PeerFile implements Cloneable, Serializable { //Files that the Peer backs up for other Peers
     private int replicationNumber;
     private String path;
 

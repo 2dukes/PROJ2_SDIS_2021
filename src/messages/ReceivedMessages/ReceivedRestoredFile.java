@@ -48,7 +48,7 @@ public class ReceivedRestoredFile extends Message {
                 );
 
                 try {
-                    new IssueMessage(peerFileDummy, 0, Macros.MSGTYPE.RESTORE);
+                    new IssueMessage(peerFileDummy, 0, Macros.MSGTYPE.RESTORE).run();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

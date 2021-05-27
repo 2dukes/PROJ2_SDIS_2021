@@ -9,6 +9,7 @@ public class JSSEConnection {
     protected PrintWriter outBuf;
     protected BufferedReader inBuf;
     protected SSLSocket socket;
+
     protected int port;
 
     public String receiveMessage() throws IOException { return inBuf.readLine(); }

@@ -24,7 +24,6 @@ public class ReceivedAskRestoredFile extends Message {
 
     @Override
     public void run() {
-
         PeerFileStored fileStored = Node.storage.getStoredFile(this.fileId);
 
         NodeInfo nodeToContact = new NodeInfo(this.IP, this.port, this.ID);
@@ -38,7 +37,7 @@ public class ReceivedAskRestoredFile extends Message {
             }
         } else { // IP_ORIG PORT_ORIG ID_ORIG RESTORED_FILE FILE_ID FALSE\n
             PeerFileStored peerFileDummy = new PeerFileStored(
-                    Node.fileIdsConsultedForRestore.get(Node.fileIdsConsultedForRestore.size() - 1),
+                    this.fileId,
                     "",
                     null,
                     0,
@@ -46,7 +45,7 @@ public class ReceivedAskRestoredFile extends Message {
             );
 
             try {
-                new SendRestoredFile(Node.nodeInfo, nodeToContact, peerFileDummy,"FALSE");
+                new SendRestoredFile(Node.nodeInfo, nodeToContact, peerFileDummy, "FALSE");
             } catch (IOException e) {
                 e.printStackTrace();
             }

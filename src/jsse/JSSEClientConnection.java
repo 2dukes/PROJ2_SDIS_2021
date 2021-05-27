@@ -1,5 +1,7 @@
 package jsse;
 
+import macros.Macros;
+
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import java.io.BufferedReader;
@@ -7,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
+import java.net.ServerSocket;
 
 public class JSSEClientConnection extends JSSEConnection {
     SSLSocketFactory socketFactory;
@@ -31,9 +34,12 @@ public class JSSEClientConnection extends JSSEConnection {
             this.inBuf = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
 
             // this.socket.setSoTimeout(1500);
-        } catch(IOException e) {
+        } catch(Exception e) {
             e.printStackTrace();
-            return;
         }
+    }
+
+    public void close() throws IOException {
+        this.socket.close();
     }
 }

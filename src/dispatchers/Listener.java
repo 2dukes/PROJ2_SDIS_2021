@@ -13,6 +13,14 @@ public class Listener implements Runnable {
         this.connection = new JSSEServerConnection();
     }
 
+    public Listener(int port) throws IOException {
+        this.connection = new JSSEServerConnection(port);
+    }
+
+    public void closeConnection() throws IOException {
+        connection.close();
+    }
+
     public int getPort() {
         return this.connection.getPort();
     }

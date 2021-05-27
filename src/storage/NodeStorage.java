@@ -5,12 +5,13 @@ import chord.NodeInfo;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class NodeStorage {
+public class NodeStorage implements Serializable {
     private final NodeInfo nodeInfo; // Only for serializing
     private final ConcurrentHashMap<BigInteger, PeerFileStored> filesStored; // Stored by him from other peers
     private final ConcurrentHashMap<BigInteger, PeerFileBackedUp> filesBackedUp; // That he demanded other peers to store

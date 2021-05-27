@@ -5,7 +5,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.security.*;
 
 import static utils.Utils.getAvailablePort;
 
@@ -13,9 +12,18 @@ public class JSSEServerConnection extends JSSEConnection {
     SSLServerSocket serverSocket;
     SSLServerSocketFactory serverSocketFactory;
 
+    public JSSEServerConnection(int port) {
+        this.port = port;
+        this.initJSSEServerConnection();
+    }
+
     public JSSEServerConnection() throws IOException {
-        this.serverSocketFactory = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
         this.port = getAvailablePort();
+        this.initJSSEServerConnection();
+    }
+
+    public void initJSSEServerConnection() {
+        this.serverSocketFactory = (SSLServerSocketFactory) SSLServerSocketFactory.getDefault();
 
         try {
             this.serverSocket = (SSLServerSocket) serverSocketFactory.createServerSocket(this.port);
@@ -42,5 +50,9 @@ public class JSSEServerConnection extends JSSEConnection {
         this.outBuf = new PrintWriter(this.socket.getOutputStream(), true);
         this.inBuf = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         return this;
+    }
+
+    public void close() throws IOException {
+        this.socket.close();
     }
 }

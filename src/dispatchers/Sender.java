@@ -17,5 +17,10 @@ public class Sender implements Runnable {
     @Override
     public void run() {
         this.connection.sendMessage(this.msg);
+        try {
+            this.connection.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

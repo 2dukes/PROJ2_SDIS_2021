@@ -5,6 +5,7 @@ import utils.Utils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -13,7 +14,7 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.UserPrincipal;
 import java.security.NoSuchAlgorithmException;
 
-public class PeerFileBackedUp extends PeerFile implements Cloneable { //Files that the Peer asks others to back up
+public class PeerFileBackedUp extends PeerFile implements Cloneable, Serializable { //Files that the Peer asks others to back up
     private String path;
 
     public PeerFileBackedUp(String path, int replicationDeg) {

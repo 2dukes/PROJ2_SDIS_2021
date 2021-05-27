@@ -28,7 +28,8 @@ public class BuildFingerTable implements Runnable {
             } else { // successor does the same thing to its successor, and so on...
                 try {
                     // NodeInfo immediatePredecessor = getImmediatePredecessor(newCurrentId);
-                    new SendQuery(Node.nodeInfo, Node.successor, newCurrentId);
+                    if(Node.successor.getId().compareTo(Node.nodeInfo.getId()) != 0)
+                        new SendQuery(Node.nodeInfo, Node.successor, newCurrentId);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
