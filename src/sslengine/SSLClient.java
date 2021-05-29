@@ -29,14 +29,6 @@ public class SSLClient extends SSLPeer {
         this.myNetData = ByteBuffer.allocate(session.getPacketBufferSize());
         this.peerAppData = ByteBuffer.allocate(1024);
         this.peerNetData = ByteBuffer.allocate(session.getPacketBufferSize());
-
-        System.out.println("------- PACKET SIZE: " + session.getPacketBufferSize());
-
-        System.out.println("------ APPLICATION BUFFER SIZE: " + session.getApplicationBufferSize());
-
-
-
-
     }
 
     public boolean connect() throws Exception {
@@ -61,8 +53,7 @@ public class SSLClient extends SSLPeer {
 
         this.peerNetData.clear();
         int waitToReadMillis = 50;
-        boolean exitReadLoop = false;
-        while(!exitReadLoop) {
+        while(true) {
             int bytesRead = socketChannel.read(this.peerNetData);
             if (bytesRead > 0) {
                 this.peerNetData.flip();
@@ -70,24 +61,19 @@ public class SSLClient extends SSLPeer {
                     this.peerAppData.clear();
                     SSLEngineResult result = engine.unwrap(this.peerNetData, this.peerAppData);
                     switch (result.getStatus()) {
-                        case OK:
+                        case OK -> {
                             this.peerAppData.flip();
                             //System.out.println("Server response: " + new String(this.peerAppData.array()));
                             this.message = new String(this.peerAppData.array());
-                            exitReadLoop = true;
                             return this.message;
-
-                        case BUFFER_OVERFLOW:
-                            this.peerAppData = enlargeApplicationBuffer(engine, this.peerAppData);
-                            break;
-                        case BUFFER_UNDERFLOW:
-                            this.peerNetData = handleBufferUnderflow(engine, this.peerNetData);
-                            break;
-                        case CLOSED:
+                        }
+                        case BUFFER_OVERFLOW -> this.peerAppData = enlargeApplicationBuffer(engine, this.peerAppData);
+                        case BUFFER_UNDERFLOW -> this.peerNetData = handleBufferUnderflow(engine, this.peerNetData);
+                        case CLOSED -> {
                             closeConnection(socketChannel, engine);
                             return null;
-                        default:
-                            throw new IllegalStateException("Invalid SSL status: " + result.getStatus());
+                        }
+                        default -> throw new IllegalStateException("Invalid SSL status: " + result.getStatus());
                     }
                 }
             } else if (bytesRead < 0) {
@@ -96,7 +82,6 @@ public class SSLClient extends SSLPeer {
             }
             Thread.sleep(waitToReadMillis);
         }
-        return null;
     }
 
     public void write(String message) throws Exception {
@@ -119,11 +104,9 @@ public class SSLClient extends SSLPeer {
                     while(this.myNetData.hasRemaining())
                         socketChannel.write(this.myNetData);
                     //System.out.println("Message sent to the server: " + message);
-                    break;
                 }
                 case BUFFER_OVERFLOW -> {
                     this.myNetData = enlargePacketBuffer(engine, this.myNetData);
-                    break;
                 }
                 case BUFFER_UNDERFLOW -> throw new SSLException("Buffer underflow occurred after a wrap.");
                 case CLOSED -> {

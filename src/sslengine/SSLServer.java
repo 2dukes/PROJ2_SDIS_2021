@@ -103,15 +103,12 @@ public class SSLServer extends SSLPeer {
                         this.peerAppData.flip();
                         System.out.println("Incoming message: " + new String(this.peerAppData.array()));
                         this.message = new String(this.peerAppData.array());
-                        break;
                     }
                     case BUFFER_OVERFLOW -> {
                         this.peerAppData = enlargeApplicationBuffer(engine, this.peerAppData);
-                        break;
                     }
                     case BUFFER_UNDERFLOW -> {
                         this.peerNetData = handleBufferUnderflow(engine, this.peerNetData);
-                        break;
                     }
                     case CLOSED -> {
                         //System.out.println("Client wants to close connection...");
@@ -148,11 +145,9 @@ public class SSLServer extends SSLPeer {
                     while(this.myNetData.hasRemaining())
                         socketChannel.write(myNetData);
                     //System.out.println("Message sent to the client: " + message);
-                    break;
                 }
                 case BUFFER_OVERFLOW -> {
                     this.myNetData = enlargePacketBuffer(engine, this.myNetData);
-                    break;
                 }
                 case BUFFER_UNDERFLOW -> throw new SSLException("Buffer underflow occurred after a wrap.");
                 case CLOSED -> {
