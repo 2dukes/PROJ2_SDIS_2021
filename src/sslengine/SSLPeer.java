@@ -39,6 +39,7 @@ public abstract class SSLPeer {
             SSLEngineResult.HandshakeStatus handshakeStatus;
 
             int appBufferSize = engine.getSession().getApplicationBufferSize();
+
             this.myAppData = ByteBuffer.allocate(appBufferSize);
             this.peerAppData = ByteBuffer.allocate(appBufferSize);
 
