@@ -10,8 +10,11 @@ import utils.Utils;
 import java.io.*;
 import java.math.BigInteger;
 import java.net.InetAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.SocketChannel;
 import java.rmi.RemoteException;
-import java.security.NoSuchAlgorithmException;
+import java.security.*;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -19,6 +22,8 @@ import storage.NodeStorage;
 import storage.PeerFile;
 import storage.PeerFileBackedUp;
 import storage.PeerFileStored;
+
+import javax.net.ssl.*;
 
 
 public class Node implements RMIService {
@@ -45,8 +50,8 @@ public class Node implements RMIService {
             e.printStackTrace();
         }
     }
-    // IDS: 6, 7, 12
-    public void initNode(boolean hasId, String id) throws IOException, NoSuchAlgorithmException {
+
+    public void initNode(boolean hasId, String id) throws Exception {
         String IP = InetAddress.getLocalHost().getHostAddress();
         if(hasId) {
             if(Node.deserializeStorage(id, IP))
@@ -245,8 +250,5 @@ public class Node implements RMIService {
 
         return false;
     }
-
-
-
 
 }

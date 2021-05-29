@@ -8,7 +8,7 @@ import java.io.IOException;
 
 // IP_ORIG PORT_ORIG ID_ORIG ADD_NODE_SET_PRED IP PORT ID
 public class    SendAddNodeSetPredecessor {
-    public SendAddNodeSetPredecessor(NodeInfo currentNodeInfo, NodeInfo predecessorNodeInfo, NodeInfo contactNodeInfo) throws IOException {
+    public SendAddNodeSetPredecessor(NodeInfo currentNodeInfo, NodeInfo predecessorNodeInfo, NodeInfo contactNodeInfo) throws Exception {
         StringBuilder builder = new StringBuilder();
         builder.append(currentNodeInfo.getAddress().getHostAddress()).append(" ");
         builder.append(currentNodeInfo.getPort()).append(" ");

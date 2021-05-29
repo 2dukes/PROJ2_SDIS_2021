@@ -15,7 +15,7 @@ public class AddNode implements Runnable {
         this.toAddNodeInfo = toAddNodeInfo;
     }
 
-    public void insertNodeBetweenNandSuccessor() throws IOException {
+    public void insertNodeBetweenNandSuccessor() throws Exception {
         // Send message to the node that is being added, for setting the successor and predecessor
         new SendAddNodeSetSuccessor(Node.nodeInfo, Node.successor, this.toAddNodeInfo);
         new SendAddNodeSetPredecessor(Node.nodeInfo, Node.nodeInfo, this.toAddNodeInfo);
@@ -39,6 +39,7 @@ public class AddNode implements Runnable {
 
     @Override
     public void run() {
+        System.out.println("\n\n\nTO ADD NODE: " + toAddNodeInfo);
         BigInteger lookUpId = toAddNodeInfo.getId();
 
         if (checkRepeatedNodeFT() || lookUpId.compareTo(Node.successor.getId()) == 0 || lookUpId.compareTo(Node.nodeInfo.getId()) == 0) { // Node a inserir já existe
