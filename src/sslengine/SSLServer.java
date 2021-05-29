@@ -29,6 +29,7 @@ public class SSLServer extends SSLPeer {
         this.myNetData = ByteBuffer.allocate(dummySession.getPacketBufferSize());
         this.peerAppData = ByteBuffer.allocate(dummySession.getApplicationBufferSize());
         this.peerNetData = ByteBuffer.allocate(dummySession.getPacketBufferSize());
+
         dummySession.invalidate();
 
         selector = SelectorProvider.provider().openSelector();

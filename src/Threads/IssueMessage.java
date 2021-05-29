@@ -7,24 +7,31 @@ import jsse.JSSEServerConnection;
 import macros.Macros;
 import messages.ReceivedMessages.ReceivedQueryResponse;
 import messages.SendMessages.*;
+import sslengine.SSLServer;
 import storage.PeerFile;
+import utils.Utils;
 
 import java.io.IOException;
 
 public class IssueMessage implements Runnable {
-    JSSEServerConnection connection;
+    SSLServer connection;
     NodeInfo originalInfo;
     PeerFile file;
     int replicationNumber;
     Macros.MSGTYPE msgType;
 
     public IssueMessage(PeerFile file, int replicationNumber, Macros.MSGTYPE msgType) throws IOException {
-        this.connection = new JSSEServerConnection();
-        this.file = file;
-        this.replicationNumber = replicationNumber;
-        this.originalInfo = new NodeInfo(Node.nodeInfo.getAddress().getHostAddress(),
-                this.connection.getPort(), Node.nodeInfo.getId());
-        this.msgType = msgType;
+        try {
+            this.connection = new SSLServer("TLSv1.2", Node.nodeInfo.getAddress().getHostAddress(), Utils.getAvailablePort());
+            this.file = file;
+            this.replicationNumber = replicationNumber;
+            this.originalInfo = new NodeInfo(Node.nodeInfo.getAddress().getHostAddress(),
+                    this.connection.getPort(), Node.nodeInfo.getId());
+            this.msgType = msgType;
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -32,19 +39,25 @@ public class IssueMessage implements Runnable {
         try {
             new SendQuery(this.originalInfo, Node.successor, this.file.getFileId());
 
-            this.connection.acceptConnection();
-            String receivedMsg = this.connection.receiveMessage();
-            ReceivedQueryResponse queryResponse = new ReceivedQueryResponse(receivedMsg);
-            NodeInfo destinationNodeInfo = new NodeInfo(queryResponse.getIP(), queryResponse.getPort(), queryResponse.getID());
+            //this.connection.acceptConnection();
+            String receivedMsg = this.connection.start();
+            //String receivedMsg = this.connection.receiveMessage();
 
-            switch (this.msgType) {
-                case BACKUP -> new SendFile(this.file, this.replicationNumber, destinationNodeInfo);
-                case DELETE -> new SendDeleteFile(Node.nodeInfo, destinationNodeInfo, this.file.getFileId());
-                case RESTORE -> new SendAskRestoredFile(Node.nodeInfo, destinationNodeInfo, this.file.getFileId());
-                default -> System.err.println("Invalid message type in IssueMessage.");
+            if (receivedMsg != null) {
+                ReceivedQueryResponse queryResponse = new ReceivedQueryResponse(receivedMsg);
+                NodeInfo destinationNodeInfo = new NodeInfo(queryResponse.getIP(), queryResponse.getPort(), queryResponse.getID());
+
+                switch (this.msgType) {
+                    case BACKUP -> new SendFile(this.file, this.replicationNumber, destinationNodeInfo);
+                    case DELETE -> new SendDeleteFile(Node.nodeInfo, destinationNodeInfo, this.file.getFileId());
+                    case RESTORE -> new SendAskRestoredFile(Node.nodeInfo, destinationNodeInfo, this.file.getFileId());
+                    default -> System.err.println("Invalid message type in IssueMessage.");
+                }
+            } else {
+                System.err.println("Null message found!");
+                this.connection.stop();
             }
-
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

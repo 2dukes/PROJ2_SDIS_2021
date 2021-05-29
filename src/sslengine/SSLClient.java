@@ -24,10 +24,18 @@ public class SSLClient extends SSLPeer {
         engine.setUseClientMode(true);
 
         SSLSession session = engine.getSession();
-        this.myAppData = ByteBuffer.allocate(1024*1024); // TODO: change this after testing
+
+        this.myAppData = ByteBuffer.allocate(1024);
         this.myNetData = ByteBuffer.allocate(session.getPacketBufferSize());
-        this.peerAppData = ByteBuffer.allocate(1024*1024); // TODO: change this after testing
+        this.peerAppData = ByteBuffer.allocate(1024);
         this.peerNetData = ByteBuffer.allocate(session.getPacketBufferSize());
+
+        System.out.println("------- PACKET SIZE: " + session.getPacketBufferSize());
+
+        System.out.println("------ APPLICATION BUFFER SIZE: " + session.getApplicationBufferSize());
+
+
+
 
     }
 
