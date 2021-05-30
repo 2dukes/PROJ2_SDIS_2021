@@ -18,10 +18,9 @@ import java.util.Base64;
 public class SendFile {
     public SendFile(PeerFile peerFile, int replicationNumber, SSLServer connection) throws InterruptedException {
         if(peerFile.getFileId().compareTo(Node.nodeInfo.getId()) != 0) {
-            PeerFileBackedUp file = (PeerFileBackedUp) peerFile;
-            int numberOfChunks = file.getChunks().size();
+            int numberOfChunks = peerFile.getChunks().size();
             int remaining = numberOfChunks;
-            for(int i = 0; i < file.getChunks().size(); i++) {
+            for(int i = 0; i < peerFile.getChunks().size(); i++) {
 
                 StringBuilder builder = new StringBuilder();
                 builder.append(Node.nodeInfo.getAddress().getHostAddress()).append(" ");
@@ -33,7 +32,7 @@ public class SendFile {
                 builder.append(peerFile.getReplicationDeg()).append(" ");
                 builder.append(replicationNumber).append(" ");
                 builder.append(--remaining).append(" ");
-                builder.append(file.getChunks().get(i)).append("\n");
+                builder.append(peerFile.getChunks().get(i)).append("\n");
 
                 try {
                     connection.write(builder.toString());

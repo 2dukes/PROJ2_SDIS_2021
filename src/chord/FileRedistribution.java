@@ -24,9 +24,10 @@ public class FileRedistribution implements Runnable {
             int port = Utils.getAvailablePort();
             String IP = Node.nodeInfo.getAddress().getHostAddress();
             this.connection = new SSLServer("TLSv1.2", IP, port);
-            this.connection.stop();
             new SendNewConnection(new NodeInfo(IP, port, Node.nodeInfo.getId()), this.newPredecessor);
+            System.out.println("WAITING FOR CONNECTION");
             this.connection.start();
+            System.out.println("GOT CONNECTION");
             PeerFileStored peerFile = Node.storage.getStoredFile(currentFileId);
             new SendFile(peerFile, peerFile.getReplicationNumber(), this.connection);
             Node.storage.removeStoredFile(currentFileId);

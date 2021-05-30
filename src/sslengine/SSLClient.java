@@ -25,9 +25,9 @@ public class SSLClient extends SSLPeer {
 
         SSLSession session = engine.getSession();
 
-        this.myAppData = ByteBuffer.allocate(1024*1024);
+        this.myAppData = ByteBuffer.allocate(1024);
         this.myNetData = ByteBuffer.allocate(session.getPacketBufferSize());
-        this.peerAppData = ByteBuffer.allocate(1024*1024);
+        this.peerAppData = ByteBuffer.allocate(1024);
         this.peerNetData = ByteBuffer.allocate(session.getPacketBufferSize());
     }
 
@@ -118,7 +118,7 @@ public class SSLClient extends SSLPeer {
         }
     }
 
-    public void shutdown() throws IOException {
+    public void shutdown() {
         //System.out.println("About to close connection with the server...");
         closeConnection(socketChannel, engine);
         executor.shutdown();

@@ -53,7 +53,6 @@ public class IssueMessage implements Runnable {
                         int port = Utils.getAvailablePort();
                         this.connection = new SSLServer("TLSv1.2", Node.nodeInfo.getAddress().getHostAddress(), port);
                         new SendNewConnection(new NodeInfo(Node.nodeInfo.getAddress().getHostAddress(), port, Node.nodeInfo.getId()), destinationNodeInfo);
-                        System.out.println("PORT= " + port);
                         System.out.println("WAITING FOR CONNECTION");
                         this.connection.start();
                         System.out.println("GOT CONNECTION");
