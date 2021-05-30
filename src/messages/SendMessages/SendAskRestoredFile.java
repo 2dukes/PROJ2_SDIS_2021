@@ -17,6 +17,6 @@ public class SendAskRestoredFile {
         builder.append("ASK_RESTORED_FILE ");
         builder.append(fileId).append("\n");
 
-        ThreadPool.getInstance().execute(new Sender(contactNodeInfo.getAddress(), contactNodeInfo.getPort(), builder.toString()));
+        ThreadPool.getInstance().execute(new Sender(contactNodeInfo, builder.toString()));
     }
 }

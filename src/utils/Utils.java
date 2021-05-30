@@ -20,15 +20,26 @@ public class Utils {
         return number;
     }
 
-    public static Integer getAvailablePort() throws IOException {
-        try {
-            ServerSocket s = new ServerSocket(Macros.gatePort);
-            s.close();
-            return Macros.gatePort;
-        } catch (IOException e) {
-            ServerSocket s = new ServerSocket(0);
-            s.close();
+    public static Integer getAvailablePort(boolean canTestGate) throws IOException {
+        if(canTestGate) {
+            try {
+                ServerSocket s = new ServerSocket(Macros.gatePort);
+                s.close();
+                return Macros.gatePort;
+            } catch (IOException e) {
+                ServerSocket s = new ServerSocket(0);
+                s.close();
+                return s.getLocalPort();
+            }
+        } else {
+            ServerSocket s;
+            do {
+                s = new ServerSocket(0);
+                s.close();
+            } while(Macros.gatePort == s.getLocalPort());
+
             return s.getLocalPort();
         }
+
     }
 }

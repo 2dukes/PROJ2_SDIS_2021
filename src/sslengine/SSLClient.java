@@ -117,7 +117,7 @@ public class SSLClient extends SSLPeer {
         }
     }
 
-    public void shutdown() {
+    public void shutdown() throws Exception {
         //System.out.println("About to close connection with the server...");
         closeConnection(socketChannel, engine);
         executor.shutdown();

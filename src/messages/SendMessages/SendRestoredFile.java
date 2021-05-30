@@ -16,7 +16,7 @@ public class SendRestoredFile {
     public SendRestoredFile(NodeInfo currentNodeInfo, NodeInfo contactNodeInfo, PeerFileStored peerFile, String hasFile) throws Exception {
         if (hasFile.equals("TRUE")) {
             // Connection Setup
-            int port = Utils.getAvailablePort();
+            int port = Utils.getAvailablePort(false);
             SSLServer connection = new SSLServer("TLSv1.2", Node.nodeInfo.getAddress().getHostAddress(), port);
             new SendConnection(new NodeInfo(Node.nodeInfo.getAddress().getHostAddress(), port, Node.nodeInfo.getId()), contactNodeInfo, "RESTORED_CONNECTION");
             connection.start();
@@ -52,7 +52,7 @@ public class SendRestoredFile {
             builder.append(" RESTORED_FILE ");
             builder.append(peerFile.getFileId()).append("\n");
 
-            ThreadPool.getInstance().execute(new Sender(contactNodeInfo.getAddress(), contactNodeInfo.getPort(), builder.toString()));
+            ThreadPool.getInstance().execute(new Sender(contactNodeInfo, builder.toString()));
         }
 
 

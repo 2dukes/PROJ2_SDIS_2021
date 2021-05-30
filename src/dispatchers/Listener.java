@@ -14,7 +14,7 @@ public class Listener implements Runnable {
 
     public Listener() throws Exception {
         String IP = InetAddress.getLocalHost().getHostAddress();
-        this.port = getAvailablePort();
+        this.port = getAvailablePort(true);
         this.connection = new SSLServer("TLSv1.2", IP, port);
     }
 
@@ -36,11 +36,6 @@ public class Listener implements Runnable {
 
                 if (receivedMessage != null)
                     handleMessage(receivedMessage);
-                else {
-                    System.err.println("Null message found!");
-                    this.connection.stop();
-                    break;
-                }
 
             } catch (Exception e) {
                 e.printStackTrace();

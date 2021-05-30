@@ -20,7 +20,7 @@ public class FileRedistribution implements Runnable {
 
     public void redistributeFile(BigInteger currentFileId) {
         try {
-            int port = Utils.getAvailablePort();
+            int port = Utils.getAvailablePort(false);
             String IP = Node.nodeInfo.getAddress().getHostAddress();
             this.connection = new SSLServer("TLSv1.2", IP, port);
             new SendConnection(new NodeInfo(IP, port, Node.nodeInfo.getId()), this.newPredecessor, "FILE_CONNECTION");

@@ -31,7 +31,7 @@ public class BuildFingerTable implements Runnable {
                     if(Node.successor.getId().compareTo(Node.nodeInfo.getId()) != 0)
                         new SendQuery(Node.nodeInfo, Node.successor, newCurrentId);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    System.err.println("Successor down, reorganizing...");
                 }
             }
         }

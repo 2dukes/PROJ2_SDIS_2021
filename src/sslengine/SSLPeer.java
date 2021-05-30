@@ -35,8 +35,8 @@ public abstract class SSLPeer {
 
     protected abstract void write(SocketChannel socketChannel, SSLEngine engine, String message) throws Exception;
 
-    protected boolean doHandshake(SocketChannel socketChannel, SSLEngine engine) {
-        try {
+    protected boolean doHandshake(SocketChannel socketChannel, SSLEngine engine) throws Exception {
+
             //System.out.println("Starting handshake protocol...");
 
             SSLEngineResult result;
@@ -60,7 +60,7 @@ public abstract class SSLPeer {
                             try {
                                 engine.closeInbound();
                             } catch (SSLException e) {
-                                System.err.println("This engine was forced to close inbound, without having received the proper SSL/TLS close notification message from the peer, due to end of stream.");
+                                // System.err.println("This engine was forced to close inbound, without having received the proper SSL/TLS close notification message from the peer, due to end of stream.");
                             }
                             engine.closeInbound();
                             handshakeStatus = engine.getHandshakeStatus();
@@ -149,9 +149,7 @@ public abstract class SSLPeer {
                     default -> throw new IllegalStateException("Invalid SSL status: " + handshakeStatus);
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
 
         return true;
     }
@@ -183,7 +181,7 @@ public abstract class SSLPeer {
         }
     }
 
-    protected void closeConnection(SocketChannel socketChannel, SSLEngine engine) {
+    protected void closeConnection(SocketChannel socketChannel, SSLEngine engine) throws Exception {
         try {
             engine.closeOutbound();
             doHandshake(socketChannel, engine);
@@ -193,11 +191,11 @@ public abstract class SSLPeer {
         }
     }
 
-    protected void handleEndOfStream(SocketChannel socketChannel, SSLEngine engine) {
+    protected void handleEndOfStream(SocketChannel socketChannel, SSLEngine engine) throws Exception {
         try {
             engine.closeInbound();
         } catch (Exception e) {
-            System.err.println("This engine was forced to close inbound, without having received the proper SSL/TLS close notification message from the peer, due to end of stream.");
+            // System.err.println("This engine was forced to close inbound, without having received the proper SSL/TLS close notification message from the peer, due to end of stream.");
         }
         closeConnection(socketChannel, engine);
     }

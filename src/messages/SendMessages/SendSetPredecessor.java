@@ -15,6 +15,6 @@ public class SendSetPredecessor {
         builder.append(currentNodeInfo.getId()).append(" ");
         builder.append("SET_PRED").append("\n");
 
-        ThreadPool.getInstance().execute(new Sender(successorNodeInfo.getAddress(), successorNodeInfo.getPort(), builder.toString()));
+        ThreadPool.getInstance().execute(new Sender(successorNodeInfo, builder.toString()));
     }
 }

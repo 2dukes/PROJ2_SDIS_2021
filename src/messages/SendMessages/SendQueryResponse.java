@@ -18,7 +18,7 @@ public class SendQueryResponse {
             builder.append("QUERY_RESPONSE ");
             builder.append(lookupId).append("\n");
 
-            ThreadPool.getInstance().execute(new Sender(contactingNodeInfo.getAddress(), contactingNodeInfo.getPort(), builder.toString()));
+            ThreadPool.getInstance().execute(new Sender(contactingNodeInfo, builder.toString()));
         } else {
             System.err.println("Cannot send a message to myself (QUERY_RESPONSE)");
         }

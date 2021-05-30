@@ -1,16 +1,22 @@
 package dispatchers;
 
+import chord.Node;
+import chord.NodeInfo;
+import messages.SendMessages.SendAddNodeSetPredecessor;
 import sslengine.SSLClient;
 
-import java.net.InetAddress;
+import java.net.ConnectException;
+import java.net.SocketException;
 
 public class Sender implements Runnable {
     SSLClient connection;
     String msg;
+    NodeInfo contactNodeInfo;
 
-    public Sender(InetAddress address, int port, String msg) {
+    public Sender(NodeInfo contactNodeInfo, String msg) {
         try {
-            this.connection = new SSLClient("TLSv1.2", address.getHostAddress(), port);
+            this.contactNodeInfo = contactNodeInfo;
+            this.connection = new SSLClient("TLSv1.2", this.contactNodeInfo.getAddress().getHostAddress(), this.contactNodeInfo.getPort());
             this.msg = msg;
         } catch (Exception e) {
             e.printStackTrace();
@@ -24,7 +30,18 @@ public class Sender implements Runnable {
             this.connection.connect();
             this.connection.write(this.msg);
         } catch (Exception e) {
-            e.printStackTrace();
+            if (Node.successor.equals(this.contactNodeInfo)) {
+                try {
+                    Node.semaphore.acquire();
+                    System.out.println("---------------------- Successor node went down. --------------------");
+                    System.out.println("SUBSEQUENT SUCCESSOR: " + Node.subsequentSuccessor.getId());
+                    Node.successor = Node.subsequentSuccessor;
+                    new SendAddNodeSetPredecessor(Node.nodeInfo, Node.nodeInfo, Node.successor);
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+                Node.semaphore.release();
+            }
         }
     }
 }

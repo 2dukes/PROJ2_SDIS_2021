@@ -17,6 +17,7 @@ import java.rmi.RemoteException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 
@@ -25,9 +26,12 @@ public class Node implements RMIService {
     public static NodeInfo nodeInfo;
     public static FingerTable fingerTable;
     public static NodeInfo successor;
+    public static NodeInfo subsequentSuccessor;
     public static NodeInfo predecessor;
     public static NodeStorage storage;
     public static List<BigInteger> fileIdsConsultedForRestore;
+    public static Semaphore semaphore = new Semaphore(1, true);
+
 
     public Node() throws IOException, NoSuchAlgorithmException {
         try {
@@ -59,6 +63,7 @@ public class Node implements RMIService {
 
         Node.fingerTable = new FingerTable();
         Node.successor = Node.nodeInfo;
+        Node.subsequentSuccessor = Node.nodeInfo;
         Node.predecessor = Node.nodeInfo;
 
         ThreadPool.getInstance().execute(Node.listener);

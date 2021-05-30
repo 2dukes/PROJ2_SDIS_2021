@@ -13,6 +13,6 @@ public class SendConnection {
         builder.append(currentSocketInfo.getId());
         builder.append(" ").append(msgType).append(" \n");
 
-        ThreadPool.getInstance().execute(new Sender(contactNodeInfo.getAddress(), contactNodeInfo.getPort(), builder.toString()));
+        ThreadPool.getInstance().execute(new Sender(contactNodeInfo, builder.toString()));
     }
 }

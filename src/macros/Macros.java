@@ -8,6 +8,7 @@ public interface Macros {
         BACKUP,
         DELETE,
         RESTORE,
+        SUBSEQUENT_SUCCESSOR,
         STATUS
     }
 }

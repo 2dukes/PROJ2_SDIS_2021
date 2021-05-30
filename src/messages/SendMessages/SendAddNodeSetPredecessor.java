@@ -16,6 +16,6 @@ public class    SendAddNodeSetPredecessor {
         builder.append(predecessorNodeInfo.getPort()).append(" ");
         builder.append(predecessorNodeInfo.getId()).append("\n");
 
-        ThreadPool.getInstance().execute(new Sender(contactNodeInfo.getAddress(), contactNodeInfo.getPort(), builder.toString()));
+        ThreadPool.getInstance().execute(new Sender(contactNodeInfo, builder.toString()));
     }
 }
