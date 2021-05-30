@@ -3,11 +3,11 @@ package messages.ReceivedMessages;
 import chord.BuildFingerTable;
 import chord.Node;
 import chord.NodeInfo;
-import messages.SendMessages.*;
+import messages.SendMessages.SendQuery;
+import messages.SendMessages.SendQueryResponse;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.List;
 
 // IP_ORIG PORT_ORIG ID_ORIG QUERY LOOKUP_ID -> Request

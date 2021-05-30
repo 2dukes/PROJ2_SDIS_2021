@@ -2,8 +2,6 @@ package Threads;
 
 import chord.Node;
 import chord.NodeInfo;
-import jdk.swing.interop.SwingInterOpUtils;
-import jsse.JSSEServerConnection;
 import macros.Macros;
 import messages.ReceivedMessages.ReceivedQueryResponse;
 import messages.SendMessages.*;
@@ -38,10 +36,7 @@ public class IssueMessage implements Runnable {
     public void run() {
         try {
             new SendQuery(this.originalInfo, Node.successor, this.file.getFileId());
-
-            //this.connection.acceptConnection();
             String receivedMsg = this.connection.start();
-            //String receivedMsg = this.connection.receiveMessage();
 
             if (receivedMsg != null) {
                 ReceivedQueryResponse queryResponse = new ReceivedQueryResponse(receivedMsg);
@@ -52,10 +47,8 @@ public class IssueMessage implements Runnable {
                         this.connection.stop();
                         int port = Utils.getAvailablePort();
                         this.connection = new SSLServer("TLSv1.2", Node.nodeInfo.getAddress().getHostAddress(), port);
-                        new SendNewConnection(new NodeInfo(Node.nodeInfo.getAddress().getHostAddress(), port, Node.nodeInfo.getId()), destinationNodeInfo);
-                        System.out.println("WAITING FOR CONNECTION");
+                        new SendConnection(new NodeInfo(Node.nodeInfo.getAddress().getHostAddress(), port, Node.nodeInfo.getId()), destinationNodeInfo, "FILE_CONNECTION");
                         this.connection.start();
-                        System.out.println("GOT CONNECTION");
                         new SendFile(this.file, this.replicationNumber, this.connection);
                     }
                     case DELETE -> new SendDeleteFile(Node.nodeInfo, destinationNodeInfo, this.file.getFileId());

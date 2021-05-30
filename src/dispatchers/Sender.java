@@ -1,9 +1,7 @@
 package dispatchers;
 
-import jsse.JSSEClientConnection;
 import sslengine.SSLClient;
 
-import java.io.IOException;
 import java.net.InetAddress;
 
 public class Sender implements Runnable {

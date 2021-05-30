@@ -1,11 +1,10 @@
 package chord;
 
-import jdk.swing.interop.SwingInterOpUtils;
 import macros.Macros;
 
 import java.math.BigInteger;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class FingerTable {

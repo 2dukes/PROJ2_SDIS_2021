@@ -1,10 +1,9 @@
 package chord;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-
-import java.math.BigInteger;
 
 
 public class NodeInfo implements Serializable {

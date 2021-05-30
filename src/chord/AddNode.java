@@ -1,8 +1,8 @@
 package chord;
 
+import messages.SendMessages.SendAddNode;
 import messages.SendMessages.SendAddNodeSetPredecessor;
 import messages.SendMessages.SendAddNodeSetSuccessor;
-import messages.SendMessages.SendAddNode;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -39,7 +39,6 @@ public class AddNode implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("\n\n\nTO ADD NODE: " + toAddNodeInfo);
         BigInteger lookUpId = toAddNodeInfo.getId();
 
         if (checkRepeatedNodeFT() || lookUpId.compareTo(Node.successor.getId()) == 0 || lookUpId.compareTo(Node.nodeInfo.getId()) == 0) { // Node a inserir já existe

@@ -1,13 +1,12 @@
 package chord;
 
 import macros.Macros;
+import messages.SendMessages.SendConnection;
 import messages.SendMessages.SendFile;
-import messages.SendMessages.SendNewConnection;
 import sslengine.SSLServer;
 import storage.PeerFileStored;
 import utils.Utils;
 
-import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
 
@@ -24,10 +23,8 @@ public class FileRedistribution implements Runnable {
             int port = Utils.getAvailablePort();
             String IP = Node.nodeInfo.getAddress().getHostAddress();
             this.connection = new SSLServer("TLSv1.2", IP, port);
-            new SendNewConnection(new NodeInfo(IP, port, Node.nodeInfo.getId()), this.newPredecessor);
-            System.out.println("WAITING FOR CONNECTION");
+            new SendConnection(new NodeInfo(IP, port, Node.nodeInfo.getId()), this.newPredecessor, "FILE_CONNECTION");
             this.connection.start();
-            System.out.println("GOT CONNECTION");
             PeerFileStored peerFile = Node.storage.getStoredFile(currentFileId);
             new SendFile(peerFile, peerFile.getReplicationNumber(), this.connection);
             Node.storage.removeStoredFile(currentFileId);

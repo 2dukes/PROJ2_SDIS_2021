@@ -8,7 +8,6 @@ import sslengine.SSLServer;
 import storage.PeerFileStored;
 import utils.Utils;
 
-import java.io.IOException;
 import java.util.List;
 
 // IP_ORIG PORT_ORIG ID_ORIG RESTORED_FILE FILE_ID FILE_NAME REPLICATION_DEG REPLICATION_NUMBER CONTENT\n
@@ -19,10 +18,8 @@ public class SendRestoredFile {
             // Connection Setup
             int port = Utils.getAvailablePort();
             SSLServer connection = new SSLServer("TLSv1.2", Node.nodeInfo.getAddress().getHostAddress(), port);
-            new SendNewRestoredConnection(new NodeInfo(Node.nodeInfo.getAddress().getHostAddress(), port, Node.nodeInfo.getId()), contactNodeInfo);
-            System.out.println("WAITING FOR CONNECTION");
+            new SendConnection(new NodeInfo(Node.nodeInfo.getAddress().getHostAddress(), port, Node.nodeInfo.getId()), contactNodeInfo, "RESTORED_CONNECTION");
             connection.start();
-            System.out.println("GOT CONNECTION");
 
             List<String> chunks = peerFile.getChunks();
             int remaining = chunks.size();

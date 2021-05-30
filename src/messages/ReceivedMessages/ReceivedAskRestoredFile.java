@@ -1,13 +1,10 @@
 package messages.ReceivedMessages;
 
-import Threads.ThreadPool;
-import chord.AddNode;
 import chord.Node;
 import chord.NodeInfo;
 import messages.SendMessages.SendRestoredFile;
 import storage.PeerFileStored;
 
-import java.io.IOException;
 import java.math.BigInteger;
 
 // IP_ORIG PORT_ORIG ID_ORIG ASK_RESTORED_FILE FILE_ID\n

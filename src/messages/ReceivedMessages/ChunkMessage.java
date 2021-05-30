@@ -1,22 +1,16 @@
 package messages.ReceivedMessages;
 
-import chord.Node;
-import storage.PeerFileStored;
-
 import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.Base64;
 
 // IP_ORIG PORT_ORIG ID_ORIG FILE FILE_ID FILE_NAME REPLICATION_DEG REPLICATION_NUMBER CONTENT
-// IP_ORIG PORT_ORIG ID_ORIG RESTORED_FILE FILE_ID FILE_NAME REPLICATION_DEG REPLICATION_NUMBER CONTENT\n
 
-public class ReceivedChunk extends Message {
+public class ChunkMessage extends Message {
     BigInteger fileId;
     String fileName;
     int replicationDeg, replicationNumber, remainingChunks;
     String chunkData;
 
-    public ReceivedChunk(String msg) {
+    public ChunkMessage(String msg) {
         super(msg);
     }
 

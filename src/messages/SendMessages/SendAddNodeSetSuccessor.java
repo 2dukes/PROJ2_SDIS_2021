@@ -4,8 +4,6 @@ import Threads.ThreadPool;
 import chord.NodeInfo;
 import dispatchers.Sender;
 
-import java.io.IOException;
-
 // IP_ORIG PORT_ORIG ID_ORIG ADD_NODE_SET_SUCC IP PORT ID
 public class SendAddNodeSetSuccessor {
     public SendAddNodeSetSuccessor(NodeInfo currentNodeInfo, NodeInfo successorNodeInfo, NodeInfo contactNodeInfo) throws Exception {

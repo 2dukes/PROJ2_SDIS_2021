@@ -1,7 +1,6 @@
 package messages.SendMessages;
 
 import Threads.ThreadPool;
-import chord.Node;
 import chord.NodeInfo;
 import dispatchers.Sender;
 

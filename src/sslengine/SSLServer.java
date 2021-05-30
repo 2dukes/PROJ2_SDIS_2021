@@ -1,7 +1,5 @@
 package sslengine;
 
-import Threads.ThreadPool;
-
 import javax.net.ssl.*;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;

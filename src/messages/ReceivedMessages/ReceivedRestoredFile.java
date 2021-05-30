@@ -10,12 +10,9 @@ import java.math.BigInteger;
 import java.util.Base64;
 
 // IP_ORIG PORT_ORIG ID_ORIG RESTORED_FILE FILE_ID FILE_NAME REPLICATION_DEG REPLICATION_NUMBER CONTENT\n
-// IP_ORIG PORT_ORIG ID_ORIG RESTORED_FILE FILE_ID FALSE\n
+// IP_ORIG PORT_ORIG ID_ORIG RESTORED_FILE FILE_ID\n
 public class ReceivedRestoredFile extends Message {
     BigInteger fileId;
-    String fileName;
-    boolean hasContent;
-    byte[] fileData;
 
     public ReceivedRestoredFile(String msg) {
         super(msg);
@@ -23,11 +20,6 @@ public class ReceivedRestoredFile extends Message {
 
     public void parseSpecificMessage() {
         this.fileId = new BigInteger(this.splitMsg[0]);
-        this.hasContent = this.splitMsg[1].equals("TRUE");
-        if (this.hasContent) {
-            this.fileName = this.splitMsg[2];
-            this.fileData = Base64.getDecoder().decode(this.splitMsg[3]);
-        }
     }
 
     @Override

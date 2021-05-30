@@ -1,11 +1,8 @@
 package messages.ReceivedMessages;
 
 import chord.Node;
-import storage.PeerFileStored;
 
 import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.Base64;
 
 // IP_ORIG PORT_ORIG ID_ORIG DELETE_FILE FILE_ID\n
 public class ReceivedDeleteFile extends Message {

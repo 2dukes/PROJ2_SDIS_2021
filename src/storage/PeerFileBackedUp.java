@@ -13,10 +13,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.UserPrincipal;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.List;
 
 public class PeerFileBackedUp extends PeerFile implements Cloneable, Serializable { //Files that the Peer asks others to back up
     private String path;

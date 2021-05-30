@@ -24,10 +24,6 @@ public class ReceivedSetSuccessor extends Message {
 
     @Override
     public void run() {
-        //if (this.ID.compareTo(Node.nodeInfo.getId()) != 0) {
-            Node.successor = new NodeInfo(this.newSuccessorIP, this.newSuccessorPort, this.newSuccessorID);
-        //} else {
-        //    System.err.println("Tried to receive message from myself.");
-        //}
+        Node.successor = new NodeInfo(this.newSuccessorIP, this.newSuccessorPort, this.newSuccessorID);
     }
 }
