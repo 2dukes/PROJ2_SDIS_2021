@@ -59,12 +59,7 @@ public class IssueMessage implements Runnable {
                         new SendFile(this.file, this.replicationNumber, this.connection);
                     }
                     case DELETE -> new SendDeleteFile(Node.nodeInfo, destinationNodeInfo, this.file.getFileId());
-                    case RESTORE -> { 
-                        this.connection.stop();
-                        new SendNewConnection(this.originalInfo, destinationNodeInfo);
-                        this.connection.start();
-                        new SendAskRestoredFile(Node.nodeInfo, destinationNodeInfo, this.file.getFileId());
-                    }
+                    case RESTORE -> { new SendAskRestoredFile(Node.nodeInfo, destinationNodeInfo, this.file.getFileId()); }
                     default -> System.err.println("Invalid message type in IssueMessage.");
                 }
             } else {

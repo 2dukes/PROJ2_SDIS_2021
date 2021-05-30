@@ -20,7 +20,7 @@ public class SendFile {
         if(peerFile.getFileId().compareTo(Node.nodeInfo.getId()) != 0) {
             int numberOfChunks = peerFile.getChunks().size();
             int remaining = numberOfChunks;
-            for(int i = 0; i < peerFile.getChunks().size(); i++) {
+            for(int i = 0; i < numberOfChunks; i++) {
 
                 StringBuilder builder = new StringBuilder();
                 builder.append(Node.nodeInfo.getAddress().getHostAddress()).append(" ");

@@ -176,7 +176,7 @@ public class Node implements RMIService {
                     0
             );
 
-            System.out.print("Restored file with ID: " + peerFileDummy.getFileId());
+            System.out.print("Restored file with ID: " + peerFileDummy.getFileId() + "\n");
             ThreadPool.getInstance().execute(new IssueMessage(peerFileDummy, 0, Macros.MSGTYPE.RESTORE));
         } catch (CloneNotSupportedException | IOException e) {
             e.printStackTrace();

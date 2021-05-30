@@ -64,6 +64,7 @@ public class Listener implements Runnable {
             case "ASK_RESTORED_FILE" -> ThreadPool.getInstance().execute(new ReceivedAskRestoredFile(msg));
             case "RESTORED_FILE" -> ThreadPool.getInstance().execute(new ReceivedRestoredFile(msg));
             case "CONNECT" -> ThreadPool.getInstance().execute(new ReceivedConnection(msg));
+            case "RESTORED_CONNECTION" -> ThreadPool.getInstance().execute(new ReceivedRestoredConnection(msg));
             default -> System.err.println("Unknown Message Type:" + messageType);
         }
     }

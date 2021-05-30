@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Base64;
 
-// IP_ORIG PORT_ORIG ID_ORIG RESTORED_FILE FILE_ID TRUE FILE_NAME CONTENT\n
+// IP_ORIG PORT_ORIG ID_ORIG RESTORED_FILE FILE_ID FILE_NAME REPLICATION_DEG REPLICATION_NUMBER CONTENT\n
 // IP_ORIG PORT_ORIG ID_ORIG RESTORED_FILE FILE_ID FALSE\n
 public class ReceivedRestoredFile extends Message {
     BigInteger fileId;
@@ -32,29 +32,23 @@ public class ReceivedRestoredFile extends Message {
 
     @Override
     public void run() {
-        if (this.hasContent) {
-            Node.storage.createRestoredFile(this.fileName, this.fileData);
-            Node.fileIdsConsultedForRestore.clear();
-        } else {
-            // they didnt have the file, ask restored file to other node
-            if(Node.fileIdsConsultedForRestore.size() > 1) {
-                Node.fileIdsConsultedForRestore.remove(0);
-                PeerFileStored peerFileDummy = new PeerFileStored(
-                        Node.fileIdsConsultedForRestore.get(0),
-                        "",
-                        null,
-                        0,
-                        0
-                );
+        if(Node.fileIdsConsultedForRestore.size() > 1) {
+            Node.fileIdsConsultedForRestore.remove(0);
+            PeerFileStored peerFileDummy = new PeerFileStored(
+                    Node.fileIdsConsultedForRestore.get(0),
+                    "",
+                    null,
+                    0,
+                    0
+            );
 
-                try {
-                    new IssueMessage(peerFileDummy, 0, Macros.MSGTYPE.RESTORE).run();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                System.err.println("No node available to restore file with ID: " + this.fileId);
+            try {
+                new IssueMessage(peerFileDummy, 0, Macros.MSGTYPE.RESTORE).run();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+        } else {
+            System.err.println("No node available to restore file with ID: " + this.fileId);
         }
     }
 }

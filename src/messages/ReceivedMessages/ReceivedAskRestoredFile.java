@@ -32,7 +32,7 @@ public class ReceivedAskRestoredFile extends Message {
         if (fileStored != null) {
             try {
                 new SendRestoredFile(Node.nodeInfo, nodeToContact, fileStored, "TRUE");
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         } else { // IP_ORIG PORT_ORIG ID_ORIG RESTORED_FILE FILE_ID FALSE\n
@@ -46,7 +46,7 @@ public class ReceivedAskRestoredFile extends Message {
 
             try {
                 new SendRestoredFile(Node.nodeInfo, nodeToContact, peerFileDummy, "FALSE");
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

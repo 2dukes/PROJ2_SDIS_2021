@@ -14,7 +14,8 @@ public class PeerFileStored extends PeerFile implements Cloneable, Serializable 
         this.data = data;
         this.replicationNumber = replicationNumber;
         this.replicationDeg = replicationDeg;
-        this.computeChunks();
+        if(data != null)
+            this.computeChunks();
     }
 
     public void setPath(String path) {
