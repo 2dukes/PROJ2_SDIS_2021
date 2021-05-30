@@ -18,6 +18,7 @@ public class SSLServer extends SSLPeer {
     private SSLContext context;
     private Selector selector;
     private String message;
+    private SelectionKey key;
 
     public SSLServer(String protocol, String IP, int port) throws Exception {
         this.port = port;
@@ -50,13 +51,15 @@ public class SSLServer extends SSLPeer {
             while(selectedKeys.hasNext()) {
                 SelectionKey key = selectedKeys.next();
                 selectedKeys.remove();
+
                 if (!key.isValid())
                     continue;
-                if (key.isAcceptable())
+                if (key.isAcceptable()) {
                     accept(key);
-                else if (key.isReadable())
+                } else if (key.isReadable()) {
+                    this.key = key;
                     return read((SocketChannel) key.channel(), (SSLEngine) key.attachment());
-
+                }
             }
         }
         return null;
@@ -65,7 +68,7 @@ public class SSLServer extends SSLPeer {
     public void stop() {
         //System.out.println("Will now close server...");
         active = false;
-        // executor.shutdown();
+        executor.shutdown();
         selector.wakeup();
     }
 
@@ -85,6 +88,15 @@ public class SSLServer extends SSLPeer {
             socketChannel.close();
             //System.out.println("Connection closed due to handshake failure.");
         }
+    }
+
+    public String read() {
+        try {
+            return read((SocketChannel) this.key.channel(), (SSLEngine) this.key.attachment());
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
@@ -129,7 +141,17 @@ public class SSLServer extends SSLPeer {
         return null;
     }
 
-    @Override
+    public void write(String message) {
+        try {
+            SocketChannel socketChannel = (SocketChannel) this.key.channel();
+            SSLEngine engine = (SSLEngine) this.key.attachment();
+            write(socketChannel, engine, message);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+        @Override
     protected void write(SocketChannel socketChannel, SSLEngine engine, String message) throws Exception {
         //System.out.println("About to write to a client...");
 

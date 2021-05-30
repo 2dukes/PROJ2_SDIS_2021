@@ -48,9 +48,24 @@ public class IssueMessage implements Runnable {
                 NodeInfo destinationNodeInfo = new NodeInfo(queryResponse.getIP(), queryResponse.getPort(), queryResponse.getID());
 
                 switch (this.msgType) {
-                    case BACKUP -> new SendFile(this.file, this.replicationNumber, destinationNodeInfo);
+                    case BACKUP -> {
+                        this.connection.stop();
+                        int port = Utils.getAvailablePort();
+                        this.connection = new SSLServer("TLSv1.2", Node.nodeInfo.getAddress().getHostAddress(), port);
+                        new SendNewConnection(new NodeInfo(Node.nodeInfo.getAddress().getHostAddress(), port, Node.nodeInfo.getId()), destinationNodeInfo);
+                        System.out.println("PORT= " + port);
+                        System.out.println("WAITING FOR CONNECTION");
+                        this.connection.start();
+                        System.out.println("GOT CONNECTION");
+                        new SendFile(this.file, this.replicationNumber, this.connection);
+                    }
                     case DELETE -> new SendDeleteFile(Node.nodeInfo, destinationNodeInfo, this.file.getFileId());
-                    case RESTORE -> new SendAskRestoredFile(Node.nodeInfo, destinationNodeInfo, this.file.getFileId());
+                    case RESTORE -> { 
+                        this.connection.stop();
+                        new SendNewConnection(this.originalInfo, destinationNodeInfo);
+                        this.connection.start();
+                        new SendAskRestoredFile(Node.nodeInfo, destinationNodeInfo, this.file.getFileId());
+                    }
                     default -> System.err.println("Invalid message type in IssueMessage.");
                 }
             } else {

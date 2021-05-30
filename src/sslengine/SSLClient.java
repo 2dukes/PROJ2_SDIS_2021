@@ -43,8 +43,8 @@ public class SSLClient extends SSLPeer {
         return doHandshake(socketChannel, engine);
     }
 
-    public void read() throws Exception {
-        read(socketChannel, engine);
+    public String read() throws Exception {
+        return read(socketChannel, engine);
     }
 
     @Override
@@ -121,6 +121,6 @@ public class SSLClient extends SSLPeer {
     public void shutdown() throws IOException {
         //System.out.println("About to close connection with the server...");
         closeConnection(socketChannel, engine);
-        // TODO: executor.shutdown();
+        executor.shutdown();
     }
 }

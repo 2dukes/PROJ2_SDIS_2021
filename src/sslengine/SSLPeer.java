@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.security.KeyStore;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public abstract class SSLPeer {
 
@@ -23,6 +25,8 @@ public abstract class SSLPeer {
 
     // Will contain the other peer's encrypted data
     protected ByteBuffer peerNetData;
+
+    protected ExecutorService executor = Executors.newSingleThreadExecutor();
 
     protected int port;
 

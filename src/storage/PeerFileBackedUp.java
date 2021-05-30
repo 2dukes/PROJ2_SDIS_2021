@@ -13,15 +13,21 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.UserPrincipal;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.List;
 
 public class PeerFileBackedUp extends PeerFile implements Cloneable, Serializable { //Files that the Peer asks others to back up
     private String path;
+    private List<String> chunks;
 
     public PeerFileBackedUp(String path, int replicationDeg) {
         this.path = path.trim();
         this.setName();
         this.replicationDeg = replicationDeg;
         this.readFile();
+        this.computeChunks();
     }
 
     // Each file replication will have a different ID
@@ -70,5 +76,34 @@ public class PeerFileBackedUp extends PeerFile implements Cloneable, Serializabl
     @Override
     public PeerFileBackedUp clone() throws CloneNotSupportedException {
         return (PeerFileBackedUp)  super.clone();
+    }
+
+    public void computeChunks() {
+        try {
+            this.chunks = new ArrayList<>();
+            byte[] fileData;
+            fileData = Files.readAllBytes(Path.of(this.path));
+            String encodedString = new String(Base64.getEncoder().encode(fileData));
+            int encodedStringSize = encodedString.length();
+
+            int i, chunkSize = 16200;
+            for (i = 0; i < encodedStringSize; i += chunkSize) {
+                String chunkData;
+
+                if (encodedStringSize - i >= chunkSize) { // if it's not the last chunk
+                    chunkData = encodedString.substring(i, i + chunkSize);
+                    this.chunks.add(chunkData);
+                } else { // last chunk
+                    chunkData = encodedString.substring(i, encodedStringSize);
+                    this.chunks.add(chunkData);
+                }
+            }
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public List<String> getChunks() {
+        return this.chunks;
     }
 }
