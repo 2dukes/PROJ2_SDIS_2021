@@ -25,15 +25,5 @@ public class ChunkMessage extends Message {
     }
 
     @Override
-    public void run() {
-        /*System.out.println("Received file! :) ");
-        System.out.println("File ID: " + this.fileId);
-        System.out.println("File Name: " + this.fileName);
-        System.out.println("Replication Degree: " + this.replicationDeg);
-        System.out.println("Replication Number: " + this.replicationNumber);
-        //System.out.println("Data: " + new String(this.fileData));
-
-        PeerFileStored file = new PeerFileStored(this.fileId, this.fileName, this.fileData, this.replicationNumber, this.replicationDeg);
-        Node.storage.addStoredFile(file);*/
-    }
+    public void run() { }
 }

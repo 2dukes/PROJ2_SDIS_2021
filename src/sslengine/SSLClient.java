@@ -48,8 +48,6 @@ public class SSLClient extends SSLPeer {
 
     @Override
     protected String read(SocketChannel socketChannel, SSLEngine engine) throws Exception {
-        //System.out.println("About to read from the server...");
-
         this.peerNetData.clear();
         int waitToReadMillis = 50;
         while(true) {
@@ -62,7 +60,6 @@ public class SSLClient extends SSLPeer {
                     switch (result.getStatus()) {
                         case OK -> {
                             this.peerAppData.flip();
-                            //System.out.println("Server response: " + new String(this.peerAppData.array()));
                             this.message = new String(this.peerAppData.array());
                             return this.message;
                         }
@@ -89,8 +86,6 @@ public class SSLClient extends SSLPeer {
 
     @Override
     protected void write(SocketChannel socketChannel, SSLEngine engine, String message) throws Exception {
-        //System.out.println("About to write to the server...");
-
         this.myAppData.clear();
         this.myAppData.put(message.getBytes());
         this.myAppData.flip();
@@ -102,7 +97,6 @@ public class SSLClient extends SSLPeer {
                     this.myNetData.flip();
                     while(this.myNetData.hasRemaining())
                         socketChannel.write(this.myNetData);
-                    //System.out.println("Message sent to the server: " + message);
                 }
                 case BUFFER_OVERFLOW -> {
                     this.myNetData = enlargePacketBuffer(engine, this.myNetData);
@@ -118,7 +112,6 @@ public class SSLClient extends SSLPeer {
     }
 
     public void shutdown() throws Exception {
-        //System.out.println("About to close connection with the server...");
         closeConnection(socketChannel, engine);
         executor.shutdown();
     }

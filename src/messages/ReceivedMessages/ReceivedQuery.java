@@ -39,7 +39,6 @@ public class ReceivedQuery extends Message {
                         this.lookupId);
                 return;
             }
-            // System.out.println("QUERYING: " + this.lookupId);
 
             if (Node.successor.getId().compareTo(Node.nodeInfo.getId()) > 0) { // Sucessor não deu a volta
                 if (this.lookupId.compareTo(Node.nodeInfo.getId()) > 0 && this.lookupId.compareTo(Node.successor.getId()) < 0) { // Node a inserir está entre Node atual e sucessor(sem voltas)

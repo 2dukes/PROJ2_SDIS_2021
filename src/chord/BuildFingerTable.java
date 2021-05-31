@@ -15,8 +15,6 @@ public class BuildFingerTable implements Runnable {
         this.printFingerTable();
 
         for (BigInteger newCurrentId : Node.fingerTable.getKeysOrder()) {
-            //BigInteger newCurrentId = currentId.add(new BigInteger(String.valueOf((int) Math.pow(2, i))))
-            //        .mod(maxNumberOfNodes);
             if(Node.successor.getId().compareTo(Node.nodeInfo.getId()) > 0 &&
                     newCurrentId.compareTo(Node.nodeInfo.getId()) > 0 &&
                     newCurrentId.compareTo(Node.successor.getId()) <= 0) { // Não dá a volta
@@ -27,7 +25,6 @@ public class BuildFingerTable implements Runnable {
                     Node.addToFingerTable(newCurrentId, Node.successor);
             } else { // successor does the same thing to its successor, and so on...
                 try {
-                    // NodeInfo immediatePredecessor = getImmediatePredecessor(newCurrentId);
                     if(Node.successor.getId().compareTo(Node.nodeInfo.getId()) != 0)
                         new SendQuery(Node.nodeInfo, Node.successor, newCurrentId);
                 } catch (IOException e) {

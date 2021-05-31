@@ -41,8 +41,6 @@ public class SSLServer extends SSLPeer {
     }
 
     public String start() throws Exception {
-        //System.out.println("Initialized and waiting for new connections...");
-
         while(active) {
             this.selector.select();
             Iterator<SelectionKey> selectedKeys = selector.selectedKeys().iterator();
@@ -64,15 +62,12 @@ public class SSLServer extends SSLPeer {
     }
 
     public void stop() {
-        //System.out.println("Will now close server...");
         active = false;
         executor.shutdown();
         selector.wakeup();
     }
 
     private void accept(SelectionKey key) throws Exception {
-        //System.out.println("New connection request!");
-
         SocketChannel socketChannel = ((ServerSocketChannel) key.channel()).accept();
         socketChannel.configureBlocking(false);
 
@@ -84,7 +79,6 @@ public class SSLServer extends SSLPeer {
             socketChannel.register(selector, SelectionKey.OP_READ, engine);
         else {
             socketChannel.close();
-            //System.out.println("Connection closed due to handshake failure.");
         }
     }
 
@@ -99,8 +93,6 @@ public class SSLServer extends SSLPeer {
 
     @Override
     protected String read(SocketChannel socketChannel, SSLEngine engine) throws Exception {
-        //System.out.println("About to read from a client...");
-
         this.peerNetData.clear();
         int bytesRead = socketChannel.read(this.peerNetData);
         if (bytesRead > 0) {
@@ -111,7 +103,7 @@ public class SSLServer extends SSLPeer {
                 switch (result.getStatus()) {
                     case OK -> {
                         this.peerAppData.flip();
-                        System.out.println("Incoming message: " + new String(this.peerAppData.array()));
+                        System.out.println("Received message: " + new String(this.peerAppData.array()));
                         this.message = new String(this.peerAppData.array());
                     }
                     case BUFFER_OVERFLOW -> {
@@ -121,7 +113,6 @@ public class SSLServer extends SSLPeer {
                         this.peerNetData = handleBufferUnderflow(engine, this.peerNetData);
                     }
                     case CLOSED -> {
-                        //System.out.println("Client wants to close connection...");
                         closeConnection(socketChannel, engine);
                         return null;
                     }
@@ -129,10 +120,8 @@ public class SSLServer extends SSLPeer {
                 }
             }
 
-            //write(socketChannel, engine, "Hello! I am your server!");
             return this.message;
         } else if (bytesRead < 0) {
-            //System.err.println("Received end of stream. Will try to close connection with client...");
             handleEndOfStream(socketChannel, engine);
         }
 
@@ -151,8 +140,6 @@ public class SSLServer extends SSLPeer {
 
         @Override
     protected void write(SocketChannel socketChannel, SSLEngine engine, String message) throws Exception {
-        //System.out.println("About to write to a client...");
-
         this.myAppData.clear();
         this.myAppData.put(message.getBytes());
         this.myAppData.flip();
@@ -164,7 +151,6 @@ public class SSLServer extends SSLPeer {
                     this.myNetData.flip();
                     while(this.myNetData.hasRemaining())
                         socketChannel.write(myNetData);
-                    //System.out.println("Message sent to the client: " + message);
                 }
                 case BUFFER_OVERFLOW -> {
                     this.myNetData = enlargePacketBuffer(engine, this.myNetData);

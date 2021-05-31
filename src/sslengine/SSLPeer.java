@@ -36,9 +36,6 @@ public abstract class SSLPeer {
     protected abstract void write(SocketChannel socketChannel, SSLEngine engine, String message) throws Exception;
 
     protected boolean doHandshake(SocketChannel socketChannel, SSLEngine engine) throws Exception {
-
-            //System.out.println("Starting handshake protocol...");
-
             SSLEngineResult result;
             SSLEngineResult.HandshakeStatus handshakeStatus;
 
@@ -59,9 +56,7 @@ public abstract class SSLPeer {
                                 return false;
                             try {
                                 engine.closeInbound();
-                            } catch (SSLException e) {
-                                // System.err.println("This engine was forced to close inbound, without having received the proper SSL/TLS close notification message from the peer, due to end of stream.");
-                            }
+                            } catch (SSLException ignored) { }
                             engine.closeInbound();
                             handshakeStatus = engine.getHandshakeStatus();
                             break;
@@ -130,7 +125,6 @@ public abstract class SSLPeer {
                                     }
                                     this.peerNetData.clear();
                                 } catch (Exception e) {
-                                    //System.err.println("Failed to send server's CLOSE message due to socket channel's failure.");
                                     handshakeStatus = engine.getHandshakeStatus();
                                 }
                             }
@@ -194,9 +188,7 @@ public abstract class SSLPeer {
     protected void handleEndOfStream(SocketChannel socketChannel, SSLEngine engine) throws Exception {
         try {
             engine.closeInbound();
-        } catch (Exception e) {
-            // System.err.println("This engine was forced to close inbound, without having received the proper SSL/TLS close notification message from the peer, due to end of stream.");
-        }
+        } catch (Exception ignored) { }
         closeConnection(socketChannel, engine);
     }
 

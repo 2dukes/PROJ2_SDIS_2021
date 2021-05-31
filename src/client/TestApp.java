@@ -43,11 +43,6 @@ public class TestApp {
                     path = args[2].trim();
                     initiatorPeer.restore(path);
                 }
-                case "STATE" -> {
-                    System.out.println("Asking for Peer State...");
-                    /*String peerState = initiatorPeer.state();
-                    System.out.println(peerState);*/
-                }
                 default -> throw new Exception("Wrong arguments [sub_protocol = " + subProtocol + "]");
             }
         } catch (Exception e) {
