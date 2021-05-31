@@ -1,15 +1,12 @@
 package chord;
 
-import macros.Macros;
+import messages.SendMessages.SendAddNode;
 import messages.SendMessages.SendAddNodeSetPredecessor;
 import messages.SendMessages.SendAddNodeSetSuccessor;
-import messages.SendMessages.SendAddNode;
 
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.Collections;
 
 public class AddNode implements Runnable {
     NodeInfo toAddNodeInfo;
@@ -18,59 +15,113 @@ public class AddNode implements Runnable {
         this.toAddNodeInfo = toAddNodeInfo;
     }
 
+    public void insertNodeBetweenNandSuccessor() throws Exception {
+        // Send message to the node that is being added, for setting the successor and predecessor
+        new SendAddNodeSetSuccessor(Node.nodeInfo, Node.successor, this.toAddNodeInfo);
+        new SendAddNodeSetPredecessor(Node.nodeInfo, Node.nodeInfo, this.toAddNodeInfo);
+
+        // Set predecessor of the next node
+        new SendAddNodeSetPredecessor(Node.nodeInfo, this.toAddNodeInfo, Node.successor);
+    }
+
+    public boolean checkRepeatedNodeFT() {
+        List<BigInteger> keysOrder = Node.fingerTable.getKeysOrder();
+        NodeInfo element;
+
+        for(int i = keysOrder.size() - 1; i >= 0; i--) {
+            element = Node.fingerTable.getNodeInfo(keysOrder.get(i));
+            if(element.getId().compareTo(toAddNodeInfo.getId()) == 0)
+                return true;
+        }
+
+        return false;
+    }
+
     @Override
     public void run() {
-        BigInteger maxId = Node.fingerTable.getMaxId();
+        BigInteger lookUpId = toAddNodeInfo.getId();
 
-        if (maxId.compareTo(this.toAddNodeInfo.getId()) < 0) {
-            // node a adicionar está além do maxID deste node
-            // IP_ORIG PORT_ORIG ID_ORIG ADD_NODE IP_TOADD PORT_TOADD ID_TOADD
-
-            try {
-                new SendAddNode(Node.nodeInfo, this.toAddNodeInfo, Node.fingerTable.getFingerTable().get(maxId));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
+        if (checkRepeatedNodeFT() || lookUpId.compareTo(Node.successor.getId()) == 0 || lookUpId.compareTo(Node.nodeInfo.getId()) == 0) { // Node a inserir já existe
+            System.err.println("Cannot create a node with ID = " + lookUpId + ", because a node with that ID already exists.");
             return;
         }
 
-        List<NodeInfo> visitedInfos = new ArrayList<>();
-        for (int i = 0; i < Macros.numberOfBits; i++) {
-            BigInteger newCurrentId = Node.nodeInfo.getId().add(new BigInteger(String.valueOf((int) Math.pow(2, i)))); // TODO: check if conversion from double to BigInteger is correct
-
-            if (this.toAddNodeInfo.getId().compareTo(newCurrentId) == 0 && Node.fingerTable.getFingerTable().get(newCurrentId).getId().compareTo(newCurrentId) == 0) {
-                System.err.println("Cannot create a node with ID = " + newCurrentId + ", because a node with that ID already exists.");
-                return;
-            }
-
-            if (this.toAddNodeInfo.getId().compareTo(newCurrentId) <= 0) {
-                try {
-                    // Send message to the node that is being added, for setting the successor and predecessor
-                    NodeInfo predecessor = getLastVisitedPredecessor(visitedInfos, Node.fingerTable.getFingerTable().get(newCurrentId));
-                    new SendAddNodeSetSuccessor(Node.nodeInfo, Node.fingerTable.getFingerTable().get(newCurrentId), this.toAddNodeInfo);
-                    new SendAddNodeSetPredecessor(Node.nodeInfo, predecessor, this.toAddNodeInfo);
-
-                    // Set predecessor of the next node
-                    new SendAddNodeSetPredecessor(Node.nodeInfo, this.toAddNodeInfo, Node.fingerTable.getFingerTable().get(newCurrentId));
-                } catch(IOException e) {
-                    e.printStackTrace();
+        try {
+            if (Node.successor.getId().compareTo(Node.nodeInfo.getId()) > 0) { // Sucessor não deu a volta
+                if (lookUpId.compareTo(Node.nodeInfo.getId()) > 0 && lookUpId.compareTo(Node.successor.getId()) < 0) { // Node a inserir está entre Node atual e sucessor(sem voltas)
+                    this.insertNodeBetweenNandSuccessor();
+                    return;
                 }
-                return;
+            } else { // sucessor deu a volta
+                if (lookUpId.compareTo(Node.nodeInfo.getId()) > 0) { // LookUpId não deu a volta
+                    if (lookUpId.compareTo(Node.nodeInfo.getId()) > 0 && lookUpId.compareTo(Node.successor.getId()) > 0) {
+                        this.insertNodeBetweenNandSuccessor();
+                        return;
+                    }
+                } else { // LookUpId deu a volta
+                    if (lookUpId.compareTo(Node.nodeInfo.getId()) < 0 && lookUpId.compareTo(Node.successor.getId()) < 0) {
+                        this.insertNodeBetweenNandSuccessor();
+                        return;
+                    }
+                }
             }
-
-            visitedInfos.add(Node.fingerTable.getFingerTable().get(newCurrentId));
+        } catch(Exception e) {
+            e.printStackTrace();
         }
 
-        System.err.println("Something bad happened (this should not happen)");
+        // lookUpId não pertence ao intervalo (n, successor]
+
+        try {
+            NodeInfo previousNodeInfo = getClosestPrecedingNode(lookUpId);
+            if (previousNodeInfo != null && previousNodeInfo.equals(Node.nodeInfo)) {
+                System.err.println("Cannot send ADD_NODE to myself!");
+                return;
+            }
+            if (previousNodeInfo == null)
+                previousNodeInfo = BuildFingerTable.getImmediatePredecessor(Node.fingerTable.getLastKey());
+
+            new SendAddNode(Node.nodeInfo, this.toAddNodeInfo, previousNodeInfo);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public NodeInfo getLastVisitedPredecessor(List<NodeInfo> visitedNodes, NodeInfo selectedNodeInfo) {
-        Collections.reverse(visitedNodes);
-        for (NodeInfo nodeInfo: visitedNodes) {
-            if(!selectedNodeInfo.equals(nodeInfo))
-                return nodeInfo;
+    public NodeInfo getClosestPrecedingNode(BigInteger lookUpId) {
+        BigInteger leftSideInterval, rightSideInterval;
+        BigInteger nextElement;
+        NodeInfo nextElementNodeInfo;
+        List<BigInteger> keysOrder = Node.fingerTable.getKeysOrder();
+
+        for(int i = keysOrder.size() - 1; i > 0; i--) {
+            nextElementNodeInfo = Node.fingerTable.getNodeInfo(keysOrder.get(i - 1));
+            nextElement = nextElementNodeInfo.getId();
+            BigInteger fingerTableId = Node.fingerTable.getNodeInfo(keysOrder.get(i)).getId();
+            if(fingerTableId.compareTo(Node.nodeInfo.getId()) > 0) { // Não deu a volta
+                leftSideInterval = nextElement;
+                rightSideInterval = fingerTableId;
+
+                if(lookUpId.compareTo(leftSideInterval) > 0 &&
+                        lookUpId.compareTo(rightSideInterval) < 0) {
+                    return nextElementNodeInfo;
+                }
+            } else { // Deu a volta
+                leftSideInterval = nextElement;
+                rightSideInterval = fingerTableId;
+
+                if (nextElement.compareTo(Node.nodeInfo.getId()) > 0) { // nextElement não deu a volta
+                    if (lookUpId.compareTo(leftSideInterval) > 0 ||
+                            lookUpId.compareTo(rightSideInterval) < 0) {
+                        return nextElementNodeInfo;
+                    }
+                } else { // nextElement deu a volta
+                    if (lookUpId.compareTo(leftSideInterval) > 0 &&
+                            lookUpId.compareTo(rightSideInterval) < 0) {
+                        return nextElementNodeInfo;
+                    }
+                }
+            }
         }
-        return Node.nodeInfo;
+
+        return null;
     }
 }

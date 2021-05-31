@@ -36,4 +36,10 @@ public abstract class Message implements Runnable {
 
     @Override
     public abstract void run();
+
+    public String getIP() { return IP; }
+
+    public int getPort() { return port; }
+
+    public BigInteger getID() { return ID; }
 }

@@ -13,25 +13,49 @@ public class BuildFingerTable implements Runnable {
     @Override
     public void run() {
         this.printFingerTable();
-        BigInteger currentId = Node.nodeInfo.getId();
-        for (int i = 0; i < Macros.numberOfBits; i++) {
-            BigInteger newCurrentId = currentId.add(new BigInteger(String.valueOf((int) Math.pow(2, i)))); // TODO: check if conversion from double to BigInteger is correct
-            if (newCurrentId.compareTo(Node.successor.getId()) <= 0) {
-                Node.addToFingerTable(Node.successor.getId(), Node.successor);
+
+        for (BigInteger newCurrentId : Node.fingerTable.getKeysOrder()) {
+            //BigInteger newCurrentId = currentId.add(new BigInteger(String.valueOf((int) Math.pow(2, i))))
+            //        .mod(maxNumberOfNodes);
+            if(Node.successor.getId().compareTo(Node.nodeInfo.getId()) > 0 &&
+                    newCurrentId.compareTo(Node.nodeInfo.getId()) > 0 &&
+                    newCurrentId.compareTo(Node.successor.getId()) <= 0) { // Não dá a volta
+                        Node.addToFingerTable(newCurrentId, Node.successor);
+            } else if(Node.successor.getId().compareTo(Node.nodeInfo.getId()) < 0 &&
+                    (newCurrentId.compareTo(Node.nodeInfo.getId()) > 0 ||
+                    newCurrentId.compareTo(Node.successor.getId()) <= 0)) { // Dá a volta
+                    Node.addToFingerTable(newCurrentId, Node.successor);
             } else { // successor does the same thing to its successor, and so on...
                 try {
-                    new SendQuery(Node.nodeInfo, Node.successor, newCurrentId);
+                    // NodeInfo immediatePredecessor = getImmediatePredecessor(newCurrentId);
+                    if(Node.successor.getId().compareTo(Node.nodeInfo.getId()) != 0)
+                        new SendQuery(Node.nodeInfo, Node.successor, newCurrentId);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    System.err.println("Successor down, reorganizing...");
                 }
             }
         }
     }
 
+    public static NodeInfo getImmediatePredecessor(BigInteger newCurrentId) {
+        BigInteger maxNumberOfNodes = new BigInteger(String.valueOf((int) Math.pow(2, Macros.numberOfBits)));
+        BigInteger lookUpId = newCurrentId;
+        do {
+            for (BigInteger currentId : Node.fingerTable.getKeysOrder()) {
+                NodeInfo currentNodeInfo = Node.fingerTable.getNodeInfo(currentId);
+                if(currentNodeInfo.getId().compareTo(lookUpId) == 0)
+                    return currentNodeInfo;
+            }
+            lookUpId = lookUpId.subtract(BigInteger.ONE).mod(maxNumberOfNodes);
+        } while (lookUpId.compareTo(newCurrentId) != 0);
+
+        return Node.nodeInfo;
+    }
+
     public void printFingerTable() {
-        System.out.print("Finger table of node " + Node.nodeInfo.getId() + ": ");
-        for (BigInteger id: Node.fingerTable.getFingerTable().keySet()) {
-            System.out.print(id + " ");
+        System.out.println("Finger table of node " + Node.nodeInfo.getId() + ": ");
+        for (BigInteger id: Node.fingerTable.getKeysOrder()) {
+            System.out.println(id + " => " + Node.fingerTable.getFingerTable().get(id).getId());
         }
         System.out.println();
     }

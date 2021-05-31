@@ -5,18 +5,17 @@ import chord.NodeInfo;
 import dispatchers.Sender;
 
 import java.io.IOException;
+import java.math.BigInteger;
 
-// IP_ORIG PORT_ORIG ID_ORIG ADD_NODE IP_TOADD PORT_TOADD ID_TOADD
-public class SendAddNode {
-    public SendAddNode(NodeInfo currentNodeInfo, NodeInfo toAddInfo, NodeInfo contactNodeInfo) throws IOException {
+// IP_ORIG PORT_ORIG ID_ORIG DELETE_FILE FILE_ID\n
+public class SendDeleteFile {
+    public SendDeleteFile(NodeInfo currentNodeInfo, NodeInfo contactNodeInfo, BigInteger fileId) throws IOException {
         StringBuilder builder = new StringBuilder();
         builder.append(currentNodeInfo.getAddress().getHostAddress()).append(" ");
         builder.append(currentNodeInfo.getPort()).append(" ");
         builder.append(currentNodeInfo.getId()).append(" ");
-        builder.append("ADD_NODE ");
-        builder.append(toAddInfo.getAddress().getHostAddress()).append(" ");
-        builder.append(toAddInfo.getPort()).append(" ");
-        builder.append(toAddInfo.getId()).append("\n");
+        builder.append("DELETE_FILE ");
+        builder.append(fileId).append("\n");
 
         ThreadPool.getInstance().execute(new Sender(contactNodeInfo, builder.toString()));
     }

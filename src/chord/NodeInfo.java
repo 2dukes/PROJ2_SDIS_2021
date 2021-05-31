@@ -1,12 +1,12 @@
 package chord;
 
+import java.io.Serializable;
+import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import java.math.BigInteger;
 
-
-public class NodeInfo {
+public class NodeInfo implements Serializable {
     private InetAddress address;
     private int port;
     private BigInteger id;
@@ -45,4 +45,6 @@ public class NodeInfo {
     public String toString() {
         return "IP=" + this.address.getHostAddress() + " Port=" + this.port + " ID=" + this.id;
     }
+
+    public void setId(BigInteger id) { this.id = id; }
 }

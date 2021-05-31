@@ -1,5 +1,6 @@
 package messages.ReceivedMessages;
 
+import chord.FileRedistribution;
 import chord.Node;
 import chord.NodeInfo;
 
@@ -22,6 +23,8 @@ public class ReceivedAddNodeSetPredecessor extends Message {
 
     @Override
     public void run() {
-        Node.predecessor = new NodeInfo(this.predecessorIP, this.predecessorPort, this.predecessorID);
+        NodeInfo newPredecessor = new NodeInfo(this.predecessorIP, this.predecessorPort, this.predecessorID);
+        new FileRedistribution(newPredecessor).run();
+        Node.predecessor = newPredecessor;
     }
 }

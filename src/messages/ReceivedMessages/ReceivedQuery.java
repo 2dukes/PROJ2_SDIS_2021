@@ -1,6 +1,6 @@
 package messages.ReceivedMessages;
 
-import Threads.ThreadPool;
+import chord.BuildFingerTable;
 import chord.Node;
 import chord.NodeInfo;
 import messages.SendMessages.SendQuery;
@@ -8,6 +8,7 @@ import messages.SendMessages.SendQueryResponse;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.List;
 
 // IP_ORIG PORT_ORIG ID_ORIG QUERY LOOKUP_ID -> Request
 public class ReceivedQuery extends Message {
@@ -23,34 +24,107 @@ public class ReceivedQuery extends Message {
 
     @Override
     public void run() {
-        // List<BigInteger> fingerTableKeys = new ArrayList<BigInteger>(fingerTableMap.keySet());
-        // Collections.sort(fingerTableKeys); // TODO: test if it's working without sort
-        if(this.ID.compareTo(Node.nodeInfo.getId()) != 0) {
-            BigInteger maxId = Node.fingerTable.getMaxId();
-            NodeInfo answerNodeInfo = new NodeInfo(this.IP, this.port, this.ID);
+        NodeInfo answerNodeInfo = new NodeInfo(this.IP, this.port, this.ID);
 
-            if (maxId.compareTo(this.lookupId) < 0) {
-                // Lookup id is not in the current node's finger table
-                // Send message to the next node
-                try {
-                    new SendQuery(answerNodeInfo, Node.successor, this.lookupId);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        try {
+            if (this.lookupId.compareTo(Node.successor.getId()) == 0) {// Node a inserir já existe
+                new SendQueryResponse(Node.successor,
+                        answerNodeInfo,
+                        this.lookupId);
+                return;
             }
-            for (int i = 0; i < Node.fingerTable.getFingerTable().keySet().size(); i++) {
-                if (Node.fingerTable.getFingerTable().get(i).getId().compareTo(this.lookupId) >= 0) {
-                    // Send response to the node that it's searching
-                    try {
-                        new SendQueryResponse(Node.fingerTable.getFingerTable().get(i), answerNodeInfo, this.ID, this.lookupId);
-                    } catch (IOException e) {
-                        e.printStackTrace();
+            else if(this.lookupId.compareTo(Node.nodeInfo.getId()) == 0) {
+                new SendQueryResponse(Node.nodeInfo,
+                        answerNodeInfo,
+                        this.lookupId);
+                return;
+            }
+            // System.out.println("QUERYING: " + this.lookupId);
+
+            if (Node.successor.getId().compareTo(Node.nodeInfo.getId()) > 0) { // Sucessor não deu a volta
+                if (this.lookupId.compareTo(Node.nodeInfo.getId()) > 0 && this.lookupId.compareTo(Node.successor.getId()) < 0) { // Node a inserir está entre Node atual e sucessor(sem voltas)
+                    new SendQueryResponse(Node.successor,
+                            answerNodeInfo,
+                            this.lookupId);
+                    return;
+                }
+            } else { // sucessor deu a volta
+                if (this.lookupId.compareTo(Node.nodeInfo.getId()) > 0) { // LookUpId não deu a volta
+                    if (this.lookupId.compareTo(Node.nodeInfo.getId()) > 0 && this.lookupId.compareTo(Node.successor.getId()) > 0) {
+                        new SendQueryResponse(Node.successor,
+                                answerNodeInfo,
+                                this.lookupId);
+                        return;
+                    }
+                } else { // LookUpId deu a volta
+                    if (this.lookupId.compareTo(Node.nodeInfo.getId()) < 0 && this.lookupId.compareTo(Node.successor.getId()) < 0) {
+                        new SendQueryResponse(Node.successor,
+                                answerNodeInfo,
+                                this.lookupId);
+                        return;
                     }
                 }
             }
-            System.err.println("Error when looking for ID: " + this.lookupId);
-        } else {
-            System.err.println("Trying to receive QUERY messages from myself.");
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        // lookUpId não pertence ao intervalo (n, successor]
+
+        try {
+            NodeInfo previousNodeInfo = getClosestPrecedingNode(this.lookupId);
+            if (previousNodeInfo != null && previousNodeInfo.equals(Node.nodeInfo)) {
+                System.err.println("Cannot send QUERY to myself!");
+                return;
+            }
+            if (previousNodeInfo == null)
+                previousNodeInfo = BuildFingerTable.getImmediatePredecessor(Node.fingerTable.getLastKey());
+
+            new SendQuery(answerNodeInfo,
+                    previousNodeInfo,
+                    this.lookupId);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
+
+    public NodeInfo getClosestPrecedingNode(BigInteger lookUpId) {
+        BigInteger leftSideInterval, rightSideInterval;
+        BigInteger nextElement;
+        NodeInfo nextElementNodeInfo;
+        List<BigInteger> keysOrder = Node.fingerTable.getKeysOrder();
+
+        for(int i = keysOrder.size() - 1; i > 0; i--) {
+            nextElementNodeInfo = Node.fingerTable.getNodeInfo(keysOrder.get(i - 1));
+            nextElement = nextElementNodeInfo.getId();
+            BigInteger fingerTableId = Node.fingerTable.getNodeInfo(keysOrder.get(i)).getId();
+            if(fingerTableId.compareTo(Node.nodeInfo.getId()) > 0) { // Não deu a volta
+                leftSideInterval = nextElement;
+                rightSideInterval = fingerTableId;
+
+                if(lookUpId.compareTo(leftSideInterval) > 0 &&
+                        lookUpId.compareTo(rightSideInterval) <= 0) {
+                    return nextElementNodeInfo;
+                }
+            } else { // Deu a volta
+                leftSideInterval = nextElement;
+                rightSideInterval = fingerTableId;
+
+                if (nextElement.compareTo(Node.nodeInfo.getId()) > 0) { // nextElement não deu a volta
+                    if (lookUpId.compareTo(leftSideInterval) > 0 ||
+                            lookUpId.compareTo(rightSideInterval) <= 0) {
+                        return nextElementNodeInfo;
+                    }
+                } else { // nextElement deu a volta
+                    if (lookUpId.compareTo(leftSideInterval) > 0 &&
+                            lookUpId.compareTo(rightSideInterval) <= 0) {
+                        return nextElementNodeInfo;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
 }

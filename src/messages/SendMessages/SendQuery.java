@@ -19,9 +19,7 @@ public class SendQuery {
             builder.append("QUERY ");
             builder.append(lookupId).append("\n");
 
-            ThreadPool.getInstance().execute(new Sender(successorNodeInfo.getAddress(), successorNodeInfo.getPort(), builder.toString()));
-        } else {
-            System.err.println("Cannot send a message to myself");
+            ThreadPool.getInstance().execute(new Sender(successorNodeInfo, builder.toString()));
         }
     }
 }

@@ -1,32 +1,43 @@
 package dispatchers;
 
 import Threads.ThreadPool;
-import jsse.JSSEServerConnection;
 import messages.ReceivedMessages.*;
+import sslengine.SSLServer;
 
-import java.io.IOException;
+import java.net.InetAddress;
+
+import static utils.Utils.getAvailablePort;
 
 public class Listener implements Runnable {
-    JSSEServerConnection connection;
+    SSLServer connection;
+    int port;
 
-    public Listener() throws IOException {
-        this.connection = new JSSEServerConnection();
+    public Listener() throws Exception {
+        String IP = InetAddress.getLocalHost().getHostAddress();
+        this.port = getAvailablePort(true);
+        this.connection = new SSLServer("TLSv1.2", IP, port);
+    }
+
+    public Listener(int port) throws Exception {
+        String IP = InetAddress.getLocalHost().getHostAddress();
+        this.port = port;
+        this.connection = new SSLServer("TLSv1.2", IP, port);
     }
 
     public int getPort() {
-        return this.connection.getPort();
+        return this.port;
     }
 
     @Override
     public void run() {
         while(true) {
             try {
-                this.connection.acceptConnection();
-                String receivedMsg = this.connection.receiveMessage();
-                System.out.format("\nReceived: %s\n", receivedMsg);
+                String receivedMessage = this.connection.start();
 
-                handleMessage(receivedMsg);
-            } catch (IOException e) {
+                if (receivedMessage != null)
+                    handleMessage(receivedMessage);
+
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -43,6 +54,11 @@ public class Listener implements Runnable {
             case "ADD_NODE" -> ThreadPool.getInstance().execute(new ReceivedAddNode(msg));
             case "ADD_NODE_SET_SUCC" -> ThreadPool.getInstance().execute(new ReceivedAddNodeSetSuccessor(msg));
             case "ADD_NODE_SET_PRED" -> ThreadPool.getInstance().execute(new ReceivedAddNodeSetPredecessor(msg));
+            case "DELETE_FILE" -> ThreadPool.getInstance().execute(new ReceivedDeleteFile(msg));
+            case "ASK_RESTORED_FILE" -> ThreadPool.getInstance().execute(new ReceivedAskRestoredFile(msg));
+            case "RESTORED_FILE" -> ThreadPool.getInstance().execute(new ReceivedRestoredFile(msg));
+            case "FILE_CONNECTION" -> ThreadPool.getInstance().execute(new ReceivedFileConnection(msg, false));
+            case "RESTORED_CONNECTION" -> ThreadPool.getInstance().execute(new ReceivedFileConnection(msg, true));
             default -> System.err.println("Unknown Message Type:" + messageType);
         }
     }
