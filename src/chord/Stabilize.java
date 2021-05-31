@@ -13,7 +13,11 @@ public class Stabilize implements Runnable {
 
     @Override
     public void run() {
-        ThreadPool.getInstance().execute(new IssueMessage(Macros.MSGTYPE.SUBSEQUENT_SUCCESSOR));
+        if(!Node.successor.getId().equals(Node.predecessor.getId()))
+            ThreadPool.getInstance().execute(new IssueMessage(Macros.MSGTYPE.SUBSEQUENT_SUCCESSOR));
+        else // Small Optimization
+            Node.subsequentSuccessor = Node.nodeInfo;
+
         try {
             this.printSuccessorAndPredecessor();
             new SendSetPredecessor(Node.nodeInfo, Node.successor);

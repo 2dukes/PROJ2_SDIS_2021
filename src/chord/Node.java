@@ -67,8 +67,8 @@ public class Node implements RMIService {
         Node.predecessor = Node.nodeInfo;
 
         ThreadPool.getInstance().execute(Node.listener);
-        ThreadPool.getInstance().scheduleAtFixedRate(new BuildFingerTable(), 0, 5000, TimeUnit.MILLISECONDS);
-        ThreadPool.getInstance().scheduleAtFixedRate(new Stabilize(), 0, 5000, TimeUnit.MILLISECONDS);
+        ThreadPool.getInstance().scheduleAtFixedRate(new BuildFingerTable(), 0, 750, TimeUnit.MILLISECONDS);
+        ThreadPool.getInstance().scheduleAtFixedRate(new Stabilize(), 0, 750, TimeUnit.MILLISECONDS);
 
         // https://stackoverflow.com/questions/1611931/catching-ctrlc-in-java
         Runtime.getRuntime().addShutdownHook(new Thread(Node::serializeStorage));

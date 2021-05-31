@@ -33,7 +33,7 @@ public class IssueMessage implements Runnable {
 
     public void initIssueMessage(Macros.MSGTYPE msgType) {
         try {
-            this.connection = new SSLServer("TLSv1.2", Node.nodeInfo.getAddress().getHostAddress(), Utils.getAvailablePort(false));
+            this.connection = new SSLServer(Macros.cypherSuite, Node.nodeInfo.getAddress().getHostAddress(), Utils.getAvailablePort(false));
             this.originalInfo = new NodeInfo(Node.nodeInfo.getAddress().getHostAddress(),
                     this.connection.getPort(), Node.nodeInfo.getId());
             this.msgType = msgType;
@@ -63,7 +63,7 @@ public class IssueMessage implements Runnable {
                     case BACKUP -> {
                         this.connection.stop();
                         int port = Utils.getAvailablePort(false);
-                        this.connection = new SSLServer("TLSv1.2", Node.nodeInfo.getAddress().getHostAddress(), port);
+                        this.connection = new SSLServer(Macros.cypherSuite, Node.nodeInfo.getAddress().getHostAddress(), port);
                         new SendConnection(new NodeInfo(Node.nodeInfo.getAddress().getHostAddress(), port, Node.nodeInfo.getId()), destinationNodeInfo, "FILE_CONNECTION");
                         this.connection.start();
                         new SendFile(this.file, this.replicationNumber, this.connection);

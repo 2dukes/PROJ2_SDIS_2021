@@ -1,6 +1,7 @@
 package messages.ReceivedMessages;
 
 import chord.Node;
+import macros.Macros;
 import sslengine.SSLClient;
 import storage.PeerFileStored;
 
@@ -22,7 +23,7 @@ public class ReceivedFileConnection extends Message {
     public void run() {
         try {
             Thread.sleep(1500);
-            SSLClient connection = new SSLClient("TLSv1.2", this.IP, this.port);
+            SSLClient connection = new SSLClient(Macros.cypherSuite, this.IP, this.port);
             connection.connect();
             connection.write("PING");
             StringBuilder fileDataBuilder = new StringBuilder();

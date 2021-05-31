@@ -2,6 +2,7 @@ package dispatchers;
 
 import chord.Node;
 import chord.NodeInfo;
+import macros.Macros;
 import messages.SendMessages.SendAddNodeSetPredecessor;
 import sslengine.SSLClient;
 
@@ -13,7 +14,7 @@ public class Sender implements Runnable {
     public Sender(NodeInfo contactNodeInfo, String msg) {
         try {
             this.contactNodeInfo = contactNodeInfo;
-            this.connection = new SSLClient("TLSv1.2", this.contactNodeInfo.getAddress().getHostAddress(), this.contactNodeInfo.getPort());
+            this.connection = new SSLClient(Macros.cypherSuite, this.contactNodeInfo.getAddress().getHostAddress(), this.contactNodeInfo.getPort());
             this.msg = msg;
         } catch (Exception e) {
             e.printStackTrace();
@@ -30,8 +31,7 @@ public class Sender implements Runnable {
             if (Node.successor.equals(this.contactNodeInfo)) {
                 try {
                     Node.semaphore.acquire();
-                    System.out.println("---------------------- Successor node went down. --------------------");
-                    System.out.println("SUBSEQUENT SUCCESSOR: " + Node.subsequentSuccessor.getId());
+                    System.out.println("\n\n\n---------------------- Successor node went down --------------------\n\n\n");
                     Node.successor = Node.subsequentSuccessor;
                     new SendAddNodeSetPredecessor(Node.nodeInfo, Node.nodeInfo, Node.successor);
                 } catch (Exception exception) {

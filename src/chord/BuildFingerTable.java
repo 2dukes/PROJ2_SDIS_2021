@@ -22,7 +22,9 @@ public class BuildFingerTable implements Runnable {
             } else if(Node.successor.getId().compareTo(Node.nodeInfo.getId()) < 0 &&
                     (newCurrentId.compareTo(Node.nodeInfo.getId()) > 0 ||
                     newCurrentId.compareTo(Node.successor.getId()) <= 0)) { // Dá a volta
-                    Node.addToFingerTable(newCurrentId, Node.successor);
+                Node.addToFingerTable(newCurrentId, Node.successor);
+            } else if(Node.successor.getId().compareTo(Node.nodeInfo.getId()) == 0) {// Successor it's himself
+                Node.addToFingerTable(newCurrentId, Node.successor);
             } else { // successor does the same thing to its successor, and so on...
                 try {
                     if(Node.successor.getId().compareTo(Node.nodeInfo.getId()) != 0)

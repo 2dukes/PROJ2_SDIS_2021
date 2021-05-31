@@ -1,6 +1,7 @@
 package dispatchers;
 
 import Threads.ThreadPool;
+import macros.Macros;
 import messages.ReceivedMessages.*;
 import sslengine.SSLServer;
 
@@ -15,13 +16,13 @@ public class Listener implements Runnable {
     public Listener() throws Exception {
         String IP = InetAddress.getLocalHost().getHostAddress();
         this.port = getAvailablePort(true);
-        this.connection = new SSLServer("TLSv1.2", IP, port);
+        this.connection = new SSLServer(Macros.cypherSuite, IP, port);
     }
 
     public Listener(int port) throws Exception {
         String IP = InetAddress.getLocalHost().getHostAddress();
         this.port = port;
-        this.connection = new SSLServer("TLSv1.2", IP, port);
+        this.connection = new SSLServer(Macros.cypherSuite, IP, port);
     }
 
     public int getPort() {
@@ -37,9 +38,7 @@ public class Listener implements Runnable {
                 if (receivedMessage != null)
                     handleMessage(receivedMessage);
 
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            } catch (Exception ignored) { }
         }
     }
 

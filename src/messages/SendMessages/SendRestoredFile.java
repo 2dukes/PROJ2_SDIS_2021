@@ -4,6 +4,7 @@ import Threads.ThreadPool;
 import chord.Node;
 import chord.NodeInfo;
 import dispatchers.Sender;
+import macros.Macros;
 import sslengine.SSLServer;
 import storage.PeerFileStored;
 import utils.Utils;
@@ -17,7 +18,7 @@ public class SendRestoredFile {
         if (hasFile.equals("TRUE")) {
             // Connection Setup
             int port = Utils.getAvailablePort(false);
-            SSLServer connection = new SSLServer("TLSv1.2", Node.nodeInfo.getAddress().getHostAddress(), port);
+            SSLServer connection = new SSLServer(Macros.cypherSuite, Node.nodeInfo.getAddress().getHostAddress(), port);
             new SendConnection(new NodeInfo(Node.nodeInfo.getAddress().getHostAddress(), port, Node.nodeInfo.getId()), contactNodeInfo, "RESTORED_CONNECTION");
             connection.start();
 
