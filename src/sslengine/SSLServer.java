@@ -73,6 +73,7 @@ public class SSLServer extends SSLPeer {
 
         SSLEngine engine = context.createSSLEngine();
         engine.setUseClientMode(false);
+        engine.setNeedClientAuth(true);
         engine.beginHandshake();
 
         if (doHandshake(socketChannel, engine))
