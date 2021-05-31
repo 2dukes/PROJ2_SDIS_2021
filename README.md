@@ -48,8 +48,7 @@ sh ../../scripts/test.sh <ACCESS_POINT> DELETE <PATH_TO_FILE>
 Eg.: sh ../../scripts/test.sh GateNode DELETE ../../resources/files/hello.txt
 
 ### Notes:
-> To change the Chord's Network size, modify the numberOfBits variable in the Macros file.
-<br>
+> To change the Chord's Network size, modify the numberOfBits variable in the Macros file.\
 > The Java version used for this project during development was 15.0.2. 
 
 
