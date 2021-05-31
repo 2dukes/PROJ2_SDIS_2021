@@ -5,9 +5,6 @@ import chord.NodeInfo;
 import messages.SendMessages.SendAddNodeSetPredecessor;
 import sslengine.SSLClient;
 
-import java.net.ConnectException;
-import java.net.SocketException;
-
 public class Sender implements Runnable {
     SSLClient connection;
     String msg;

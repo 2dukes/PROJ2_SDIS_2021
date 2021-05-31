@@ -3,11 +3,7 @@ package chord;
 import Threads.IssueMessage;
 import Threads.ThreadPool;
 import macros.Macros;
-import messages.ReceivedMessages.ReceivedQueryResponse;
-import messages.SendMessages.SendQuery;
 import messages.SendMessages.SendSetPredecessor;
-import sslengine.SSLServer;
-import utils.Utils;
 
 import java.io.IOException;
 

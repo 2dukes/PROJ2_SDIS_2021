@@ -127,7 +127,7 @@ public class Node implements RMIService {
                 PeerFileBackedUp copyPeerFile = fileToDelete.clone();
                 BigInteger fileId = copyPeerFile.computeId(replicationNumber);
                 if(fileId.compareTo(nodeInfo.getId()) != 0) {
-                    System.out.print("Deleted file with ID: " + fileId);
+                    System.out.println("Deleted file with ID: " + fileId);
 
                     ThreadPool.getInstance().execute(new IssueMessage(copyPeerFile, replicationNumber, Macros.MSGTYPE.DELETE));
                     peerCount++;

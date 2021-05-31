@@ -7,7 +7,6 @@ import storage.PeerFileStored;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.util.Base64;
 
 // IP_ORIG PORT_ORIG ID_ORIG RESTORED_FILE FILE_ID FILE_NAME REPLICATION_DEG REPLICATION_NUMBER CONTENT\n
 // IP_ORIG PORT_ORIG ID_ORIG RESTORED_FILE FILE_ID\n

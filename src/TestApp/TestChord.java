@@ -17,16 +17,15 @@ import java.security.NoSuchAlgorithmException;
 
 public class TestChord {
     public static void main(String[] args) throws IOException, NoSuchAlgorithmException {
-        // Usage:
-        // ACCESS_POINT
-
         Node node;
-        if(args.length > 1)
+        if(args.length == 2)
             node = new Node(args[1]);
-        else
+        else if(args.length == 1)
             node = new Node();
-
-        /*Node node = args.length == 3 ? new Node(args[2]) : new Node();*/
+        else {
+            System.out.println("Usage: <ACCESS_POINT> [ID]");
+            return;
+        }
 
         String accessPoint = args[0];
         Remote obj = node;
@@ -38,6 +37,5 @@ public class TestChord {
             new SendAddNode(Node.nodeInfo, Node.nodeInfo, new NodeInfo(InetAddress.getLocalHost().getHostAddress(), Macros.gatePort, BigInteger.ZERO));
 
         System.out.println(Node.nodeInfo.toString());
-        //System.out.println("IP=" + Node.nodeInfo.getAddress().getHostAddress() +  " PORT=" + Node.nodeInfo.getPort() + " ID=" + Node.nodeInfo.getId());
     }
 }
