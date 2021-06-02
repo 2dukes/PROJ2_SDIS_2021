@@ -44,7 +44,7 @@ public class FileRedistribution implements Runnable {
                     && currentFileId.compareTo(this.newPredecessor.getId()) <= 0){
                 redistributeFile(currentFileId);
             }
-            else if(Node.predecessor.getId().compareTo(Node.nodeInfo.getId()) > 0) { // Deu a volta
+            else if(Node.predecessor.getId().compareTo(Node.nodeInfo.getId()) >= 0) { // Deu a volta
                 if(this.newPredecessor.getId().compareTo(Node.predecessor.getId()) > 0 && this.newPredecessor.getId().compareTo(maxNumberOfNodes) < 0) {
                     if(currentFileId.compareTo(this.newPredecessor.getId()) <= 0 && currentFileId.compareTo(Node.predecessor.getId()) > 0) {
                         redistributeFile(currentFileId);

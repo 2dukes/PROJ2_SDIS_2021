@@ -33,7 +33,7 @@ public class Sender implements Runnable {
                     Node.semaphore.acquire();
                     System.out.println("\n\n\n---------------------- Successor node went down --------------------\n\n\n");
                     Node.successor = Node.subsequentSuccessor;
-                    new SendAddNodeSetPredecessor(Node.nodeInfo, Node.nodeInfo, Node.successor);
+                    new SendAddNodeSetPredecessor(Node.nodeInfo, Node.nodeInfo, Node.successor, "FALSE");
                 } catch (Exception exception) {
                     exception.printStackTrace();
                 }

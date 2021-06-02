@@ -18,10 +18,10 @@ public class AddNode implements Runnable {
     public void insertNodeBetweenNandSuccessor() throws Exception {
         // Send message to the node that is being added, for setting the successor and predecessor
         new SendAddNodeSetSuccessor(Node.nodeInfo, Node.successor, this.toAddNodeInfo);
-        new SendAddNodeSetPredecessor(Node.nodeInfo, Node.nodeInfo, this.toAddNodeInfo);
+        new SendAddNodeSetPredecessor(Node.nodeInfo, Node.nodeInfo, this.toAddNodeInfo, "TRUE");
 
         // Set predecessor of the next node
-        new SendAddNodeSetPredecessor(Node.nodeInfo, this.toAddNodeInfo, Node.successor);
+        new SendAddNodeSetPredecessor(Node.nodeInfo, this.toAddNodeInfo, Node.successor, "TRUE");
     }
 
     public boolean checkRepeatedNodeFT() {
