@@ -30,7 +30,7 @@ public class SendFile {
                     System.err.println("Failed to write!");
                 }
 
-                Thread.sleep(75);
+                Thread.sleep(100);
             }
         } else {
             System.err.println("Cannot send a message to myself (FILE)");

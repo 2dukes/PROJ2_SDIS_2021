@@ -16,6 +16,12 @@ Group members:
 rmiregistry
 ```
 
+### Cleanup (build/ folder)
+```
+sh ../../scripts/cleanup.sh [ID]
+```
+Eg.: sh ../../scripts/cleanup.sh 3
+
 ### Compile (src/ folder)
 ``` 
 sh ../scripts/compile.sh

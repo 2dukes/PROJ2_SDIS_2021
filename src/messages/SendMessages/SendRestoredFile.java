@@ -43,7 +43,7 @@ public class SendRestoredFile {
                     System.err.println("Failed to write!");
                 }
 
-                Thread.sleep(75);
+                Thread.sleep(100);
             }
         } else {
             StringBuilder builder = new StringBuilder();

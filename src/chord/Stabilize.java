@@ -19,21 +19,9 @@ public class Stabilize implements Runnable {
             Node.subsequentSuccessor = Node.nodeInfo;
 
         try {
-            this.printSuccessorAndPredecessor();
             new SendSetPredecessor(Node.nodeInfo, Node.successor);
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public void printSuccessorAndPredecessor() {
-        System.out.print("Successor of node " + Node.nodeInfo.getId() + " => ");
-        System.out.println(Node.successor.getId());
-
-        System.out.print("Predecessor of node " + Node.nodeInfo.getId() + " => ");
-        System.out.println(Node.predecessor.getId());
-
-        System.out.print("Subsequent successor of node " + Node.nodeInfo.getId() + " => ");
-        System.out.println(Node.subsequentSuccessor.getId());
     }
 }

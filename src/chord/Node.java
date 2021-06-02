@@ -69,7 +69,7 @@ public class Node implements RMIService {
         ThreadPool.getInstance().execute(Node.listener);
         ThreadPool.getInstance().scheduleAtFixedRate(new BuildFingerTable(), 0, 750, TimeUnit.MILLISECONDS);
         ThreadPool.getInstance().scheduleAtFixedRate(new Stabilize(), 0, 750, TimeUnit.MILLISECONDS);
-
+        ThreadPool.getInstance().scheduleAtFixedRate(new PrintChordInfo(), 0, 2500, TimeUnit.MILLISECONDS);
         // https://stackoverflow.com/questions/1611931/catching-ctrlc-in-java
         Runtime.getRuntime().addShutdownHook(new Thread(Node::serializeStorage));
     }
@@ -83,11 +83,11 @@ public class Node implements RMIService {
     public void backup(String path, int replicationDeg) throws RemoteException {
         System.out.println("BACKING UP...");
 
-        PeerFileBackedUp peerFile = new PeerFileBackedUp(path, replicationDeg);
-        peerFile.computeId(0);
-        storage.addFileBackedUp(peerFile);
-
         try {
+            PeerFileBackedUp peerFile = new PeerFileBackedUp(path, replicationDeg);
+
+            peerFile.computeId(0);
+            storage.addFileBackedUp(peerFile);
             int replicationNumber = 0;
             int peerStoredCount = 0;
             while (peerStoredCount < replicationDeg) {
@@ -106,7 +106,7 @@ public class Node implements RMIService {
                 replicationNumber++;
             }
         } catch (CloneNotSupportedException | IOException e) {
-            e.printStackTrace();
+            System.out.println("\n\nAn error occurred while processing file.\n\n");
         }
     }
 

@@ -12,7 +12,6 @@ public class BuildFingerTable implements Runnable {
 
     @Override
     public void run() {
-        this.printFingerTable();
 
         for (BigInteger newCurrentId : Node.fingerTable.getKeysOrder()) {
             if(Node.successor.getId().compareTo(Node.nodeInfo.getId()) > 0 &&
@@ -49,13 +48,5 @@ public class BuildFingerTable implements Runnable {
         } while (lookUpId.compareTo(newCurrentId) != 0);
 
         return Node.nodeInfo;
-    }
-
-    public void printFingerTable() {
-        System.out.println("Finger table of node " + Node.nodeInfo.getId() + ": ");
-        for (BigInteger id: Node.fingerTable.getKeysOrder()) {
-            System.out.println(id + " => " + Node.fingerTable.getFingerTable().get(id).getId());
-        }
-        System.out.println();
     }
 }
