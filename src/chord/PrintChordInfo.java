@@ -27,7 +27,7 @@ public class PrintChordInfo implements Runnable {
 
 
     public void printSuccessorAndPredecessor() {
-        System.out.print("Successor of node " + Node.nodeInfo.getI+d() + " => ");
+        System.out.print("Successor of node " + Node.nodeInfo.getId() + " => ");
         System.out.println(Node.successor.getId());
 
         System.out.print("Predecessor of node " + Node.nodeInfo.getId() + " => ");
