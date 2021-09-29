@@ -8,8 +8,9 @@ Group members:
 2. Rui Filipe Mendes Pinto (<up201806441@edu.fe.up.pt>)
 3. Tiago Gonçalves Gomes (<up201806658@edu.fe.up.pt>)
 
-## Second Project
-**Note**: The folders where the scripts have to be executed follow the same logic as in the first project.
+## Project - Distributed Backup Service
+
+This project consisted of a Distributed peer-to-peer (P2P) system that relied on the Chord Protocol and allowed backup, deletion, and restoral of a file previously divided in chunks that were spread among the other peers. The messages exchanged between the peers were encrypted through an SSL communication channel. The project was built to be fault-tolerant and scalable, always maintaining its stability. Lastly, the usage of thread pools and non-blocking I/O allowed the system to achieve high levels of concurrency and parallelism.
 
 ### Start RMI (build/ folder)
 ```
@@ -56,6 +57,3 @@ Eg.: sh ../../scripts/test.sh GateNode DELETE ../../resources/files/hello.txt
 ### Notes:
 > To change the Chord's Network size, modify the numberOfBits variable in the Macros file.\
 > The Java version used for this project during development was 15.0.2. 
-
-
-
